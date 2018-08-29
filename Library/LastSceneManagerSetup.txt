@@ -1,1 +1,4 @@
-sceneSetups: []
+sceneSetups:
+- path: Assets/Test scene Jan.unity
+  isLoaded: 1
+  isActive: 1
