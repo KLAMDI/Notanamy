@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-    public float testUp;
-
     //Rigidbody
     private Rigidbody rb;
 
@@ -75,7 +73,6 @@ public class Player : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
-        testUp = rb.velocity.y;
         //physics
         {
             //Simulate gravity for player only 
