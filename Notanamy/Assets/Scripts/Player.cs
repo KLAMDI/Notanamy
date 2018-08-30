@@ -27,13 +27,22 @@ public class Player : MonoBehaviour {
     public float wallGravity;
     public float fallingMultiplier;
     public float lowJumpMultiplier;
+    float normalGravity;
 
     //Dash
-    public bool dashAbl;
-    public float dashSpeed;
+    public bool dashAbl1;
+
+    public bool dashAbl2;
+    public float maxDashLength;
+    public float dashLength;
+    public bool isDashing;
+
+
     public float dashTimer;
+    float dashTimerInit;
+    public float dashSpeed;
     int dashTapCount = 0;
-    float dashTimeInit;
+
 
     //collision ditection
     private Collider col;
@@ -48,7 +57,9 @@ public class Player : MonoBehaviour {
         // get the distance to ground
         distToGround = col.bounds.extents.y;
         distToWall = col.bounds.extents.x;
-        dashTimeInit = dashTimer;
+        //Dashing
+        dashTimerInit = dashTimer;
+        dashLength = maxDashLength;
     }
 
     //Checks if the player in on the ground using 5 raycast to minimize the area not checked and returns a boolian
@@ -91,21 +102,37 @@ public class Player : MonoBehaviour {
             }
             else
             {
-                //Change gravity strenght to make jumps less floaty
-                if (rb.velocity.y < 0)
-                {
-                    rb.AddForce(0, -gravity * fallingMultiplier, 0);
+                //Turn gravity off while the player is dashing
+                if (!isDashing)
+                    {
+
+                    //Change gravity strength to make jumps less floaty
+                    if (rb.velocity.y < 0)
+                    {
+                        rb.AddForce(0, -gravity * fallingMultiplier, 0);
+                    }
+                    //Holding up makes you jump higher
+                    else if (Input.GetKey(KeyCode.W))
+                    {
+                        rb.AddForce(0, -gravity, 0);
+                    }
+                    //Higher gravity when not holding up
+                    else
+                    {
+                        rb.AddForce(0, -gravity * lowJumpMultiplier, 0);
+                    }
                 }
-                //Holding up makes you jump higher
-                else if (Input.GetKey(KeyCode.W))
-                {
-                    rb.AddForce(0, -gravity, 0);
-                }
-                //Higher gravity when not holding up
-                else
-                {
-                    rb.AddForce(0, -gravity * lowJumpMultiplier, 0);
-                }
+            }
+
+            //Stops dash once max length has been reached
+            if (isDashing && dashLength > 0)
+            {
+                dashLength -= 1 * Time.deltaTime;
+            }
+            else
+            {
+                dashLength = maxDashLength;
+                isDashing = false;
             }
 
             //Limmit the speed a player can move at
@@ -153,11 +180,25 @@ public class Player : MonoBehaviour {
             //Movement controls
             if (Input.GetKey(KeyCode.A) && !(Input.GetKey(KeyCode.D)))
             {
-                rb.AddForce(-speed, 0, 0);
+                if (isDashing)
+                {
+                    rb.AddForce(-dashSpeed, 0, 0);
+                }
+                else
+                {
+                    rb.AddForce(-speed, 0, 0);
+                }
             }
             if (Input.GetKey(KeyCode.D) && !(Input.GetKey(KeyCode.A)))
             {
-                rb.AddForce(speed, 0, 0);
+                if (isDashing)
+                {
+                    rb.AddForce(dashSpeed, 0, 0);
+                }
+                else
+                {
+                    rb.AddForce(speed, 0, 0);
+                }
             }
 
             //Press up to jump
@@ -202,8 +243,8 @@ public class Player : MonoBehaviour {
                 }
             }
 
-            //Double tap to dash
-            if (dashAbl && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)) )
+            //Double tap to dash, type 1
+            if (dashAbl1 && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)) )
             {
                 //Is true if double tapped, count is number of taps minus 1
                 if (dashTimer > 0 && dashTapCount == 1)
@@ -221,12 +262,29 @@ public class Player : MonoBehaviour {
 
                 else
                 {
-                    dashTimer = dashTimeInit;
+                    dashTimer = dashTimerInit;
                     dashTapCount += 1;
                 }
             }
 
-            if (dashTimer > 0)
+            //Double tap to dash, type 2
+            if (dashAbl2 && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)) )
+            {
+                //Is true if double tapped, count is number of taps minus 1
+                if (dashTimer > 0 && dashTapCount == 1)
+                {
+                    isDashing = true;
+                }
+
+                else
+                {
+                    dashTimer = dashTimerInit;
+                    dashTapCount += 1;
+                }
+            }
+
+            //Updating dashtimer
+            if (dashTimer > 0 && (dashAbl1 || dashAbl2))
             {
                 dashTimer -= 1 * Time.deltaTime;
             }
@@ -235,6 +293,7 @@ public class Player : MonoBehaviour {
             {
                 dashTapCount = 0;
             }
+
         }
     }
 }
