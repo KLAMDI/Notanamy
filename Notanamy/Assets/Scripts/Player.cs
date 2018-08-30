@@ -34,8 +34,8 @@ public class Player : MonoBehaviour {
 
     public bool dashAbl2;
     public float maxDashLength;
-    public float dashLength;
-    public bool isDashing;
+    float dashLength;
+    bool isDashing;
 
 
     public float dashTimer;
@@ -102,37 +102,22 @@ public class Player : MonoBehaviour {
             }
             else
             {
-                //Turn gravity off while the player is dashing
-                if (!isDashing)
-                    {
 
-                    //Change gravity strength to make jumps less floaty
-                    if (rb.velocity.y < 0)
-                    {
-                        rb.AddForce(0, -gravity * fallingMultiplier, 0);
-                    }
-                    //Holding up makes you jump higher
-                    else if (Input.GetKey(KeyCode.W))
-                    {
-                        rb.AddForce(0, -gravity, 0);
-                    }
-                    //Higher gravity when not holding up
-                    else
-                    {
-                        rb.AddForce(0, -gravity * lowJumpMultiplier, 0);
-                    }
+                //Change gravity strength to make jumps less floaty
+                if (rb.velocity.y < 0)
+                {
+                    rb.AddForce(0, -gravity * fallingMultiplier, 0);
                 }
-            }
-
-            //Stops dash once max length has been reached
-            if (isDashing && dashLength > 0)
-            {
-                dashLength -= 1 * Time.deltaTime;
-            }
-            else
-            {
-                dashLength = maxDashLength;
-                isDashing = false;
+                //Holding up makes you jump higher
+                else if (Input.GetKey(KeyCode.W))
+                {
+                    rb.AddForce(0, -gravity, 0);
+                }
+                //Higher gravity when not holding up
+                else
+                {
+                    rb.AddForce(0, -gravity * lowJumpMultiplier, 0);
+                }
             }
 
             //Limmit the speed a player can move at
@@ -180,25 +165,11 @@ public class Player : MonoBehaviour {
             //Movement controls
             if (Input.GetKey(KeyCode.A) && !(Input.GetKey(KeyCode.D)))
             {
-                if (isDashing)
-                {
-                    rb.AddForce(-dashSpeed, 0, 0);
-                }
-                else
-                {
-                    rb.AddForce(-speed, 0, 0);
-                }
+                rb.AddForce(-speed, 0, 0);
             }
             if (Input.GetKey(KeyCode.D) && !(Input.GetKey(KeyCode.A)))
             {
-                if (isDashing)
-                {
-                    rb.AddForce(dashSpeed, 0, 0);
-                }
-                else
-                {
-                    rb.AddForce(speed, 0, 0);
-                }
+                rb.AddForce(speed, 0, 0);
             }
 
             //Press up to jump
@@ -273,6 +244,12 @@ public class Player : MonoBehaviour {
                 //Is true if double tapped, count is number of taps minus 1
                 if (dashTimer > 0 && dashTapCount == 1)
                 {
+                    //Makes dash go left
+                    if (Input.GetKeyDown(KeyCode.A))
+                    {
+                        dashSpeed = -dashSpeed;
+                    }
+
                     isDashing = true;
                 }
 
@@ -292,6 +269,23 @@ public class Player : MonoBehaviour {
             else
             {
                 dashTapCount = 0;
+            }
+
+            //Stops dash once max length has been reached
+            if (isDashing && dashLength > 0)
+            {
+                dashLength -= 1 * Time.deltaTime;
+                rb.AddForce(dashSpeed, 0, 0);
+                rb.constraints = ~RigidbodyConstraints.FreezePositionX;
+            }
+            else
+            {
+                dashLength = maxDashLength;
+                isDashing = false;
+                rb.constraints &= ~RigidbodyConstraints.FreezePositionY;
+
+                //Resets dash to right side
+                dashSpeed = Mathf.Abs(dashSpeed);
             }
 
         }
