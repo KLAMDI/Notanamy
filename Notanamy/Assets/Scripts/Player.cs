@@ -27,20 +27,28 @@ public class Player : MonoBehaviour {
     public float wallGravity;
     public float fallingMultiplier;
     public float lowJumpMultiplier;
-    
+
+    //Dash
+    public bool dashAbl;
+    public float dashSpeed;
+    public float dashTimer;
+    int dashTapCount = 0;
+    float dashTimeInit;
+
     //collision ditection
     private Collider col;
     private float distToGround;
     private float distToWall;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         //Get the nessesarie components
         rb = gameObject.GetComponent<Rigidbody>();
         col = gameObject.GetComponent<Collider>();
         // get the distance to ground
         distToGround = col.bounds.extents.y;
         distToWall = col.bounds.extents.x;
+        dashTimeInit = dashTimer;
     }
 
     //Checks if the player in on the ground using 5 raycast to minimize the area not checked and returns a boolian
@@ -192,6 +200,40 @@ public class Player : MonoBehaviour {
                 {
                     rb.velocity = new Vector3(rb.velocity.x, -3 * jumpSpeed, 0);
                 }
+            }
+
+            //Double tap to dash
+            if (dashAbl && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)) )
+            {
+                //Is true if double tapped, count is number of taps minus 1
+                if (dashTimer > 0 && dashTapCount == 1)
+                {
+                    if (Input.GetKeyDown(KeyCode.A))
+                    {
+                        rb.AddForce(-dashSpeed, 0, 0);
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.D))
+                    {
+                        rb.AddForce(dashSpeed, 0, 0);
+                    }
+                }
+
+                else
+                {
+                    dashTimer = dashTimeInit;
+                    dashTapCount += 1;
+                }
+            }
+
+            if (dashTimer > 0)
+            {
+                dashTimer -= 1 * Time.deltaTime;
+            }
+
+            else
+            {
+                dashTapCount = 0;
             }
         }
     }
