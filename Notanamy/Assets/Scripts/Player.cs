@@ -40,12 +40,14 @@ public class Player : MonoBehaviour {
     float dashLength;
     bool isDashing;
 
-
     public float dashTimer;
     float dashTimerInit;
     public float dashSpeed;
     int dashTapCount = 0;
 
+    //Grappling Hook
+    public bool GrHAbl;
+    public Rigidbody grapplingHook;
 
     //collision ditection
     private Collider col;
@@ -56,7 +58,6 @@ public class Player : MonoBehaviour {
     public bool attackOn;
     public GameObject attack;
     public float attackRange;
-
 
     // Use this for initialization
     void Start () {
@@ -120,6 +121,12 @@ public class Player : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
+        //Mouse Position
+        mouseP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mouseP = new Vector3(mouseP.x, mouseP.y, 0);
+
+        Debug.Log(mouseP);
+
         //physics
         {
             //Simulate gravity for player only 
@@ -316,12 +323,17 @@ public class Player : MonoBehaviour {
                 dashSpeed = Mathf.Abs(dashSpeed);
             }
 
+            //Throw a grappling hook using the R button
+            if (GrHAbl && Input.GetKeyDown(KeyCode.R))
+            {
+                Rigidbody rigidGrHook;
+                rigidGrHook = Instantiate(grapplingHook, mouseP, rb.rotation) as Rigidbody;
+            }
+
             //Mouse controles
             {
                 if (attackOn)
                 {
-                    mouseP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    mouseP = new Vector3(mouseP.x, mouseP.y, 0);
 
                     if (Input.GetMouseButton(0))
                     {
