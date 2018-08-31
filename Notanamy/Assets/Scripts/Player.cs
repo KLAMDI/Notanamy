@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
+    //Mouse possition
+    Vector3 mouseP;
+
     //Rigidbody
     private Rigidbody rb;
 
@@ -49,6 +52,12 @@ public class Player : MonoBehaviour {
     private float distToGround;
     private float distToWall;
 
+    //Attack
+    public bool attackOn;
+    public GameObject attack;
+    public float attackRange;
+
+
     // Use this for initialization
     void Start () {
         //Get the nessesarie components
@@ -87,6 +96,25 @@ public class Player : MonoBehaviour {
         bool OnWall1 = Physics.Raycast(transform.position, Vector3.right, distToWall + 0.1f);
         bool OnWall = OnWall1;
         return OnWall;
+    }
+
+    public float AngleBetweenPoints(Vector3 pointA, Vector3 pointB)
+    {
+        float Ad = pointA.x - pointB.x;
+        float Op = pointA.y - pointB.y;
+        float angle = 0;
+        angle = Mathf.Atan(Op / Ad);
+        return angle;
+    }
+
+    public Vector3 AngleToPosition(float angle, float Hy, float posZ = 0)
+    {
+        float Op;
+        float Ad;
+        Op = Mathf.Sin(angle) * Hy;
+        Ad = Mathf.Cos(angle) * Hy;
+        Vector3 pos = new Vector3(Ad, Op, posZ);
+        return pos;
     }
 
     // Update is called once per frame
@@ -286,6 +314,32 @@ public class Player : MonoBehaviour {
 
                 //Resets dash to right side
                 dashSpeed = Mathf.Abs(dashSpeed);
+            }
+
+            //Mouse controles
+            {
+                if (attackOn)
+                {
+                    mouseP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    mouseP = new Vector3(mouseP.x, mouseP.y, 0);
+
+                    if (Input.GetMouseButton(0))
+                    {
+                        Vector3 tempPos = new Vector3(0, 0, 0);
+                        float tempAngle = AngleBetweenPoints(gameObject.transform.position, mouseP);
+                        if (gameObject.transform.position.x < mouseP.x)
+                        {
+                            tempPos = AngleToPosition(tempAngle, attackRange) + gameObject.transform.position;
+                        }
+                        else
+                        {
+                            tempPos = -AngleToPosition(tempAngle, attackRange) + gameObject.transform.position;
+                        }
+                        GameObject tempAttack = Instantiate(attack);
+                        tempAttack.transform.position = tempPos;
+
+                    }
+                }
             }
 
         }
