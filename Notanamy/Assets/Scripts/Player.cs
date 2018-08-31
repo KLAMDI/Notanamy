@@ -125,8 +125,6 @@ public class Player : MonoBehaviour {
         mouseP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseP = new Vector3(mouseP.x, mouseP.y, 0);
 
-        Debug.Log(mouseP);
-
         //physics
         {
             //Simulate gravity for player only 
