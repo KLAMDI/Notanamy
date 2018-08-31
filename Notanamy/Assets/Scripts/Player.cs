@@ -47,6 +47,7 @@ public class Player : MonoBehaviour {
 
     //Grappling Hook
     public bool GrHAbl;
+    public float grThrowSpeed;
     public Rigidbody grapplingHook;
 
     //collision ditection
@@ -326,6 +327,19 @@ public class Player : MonoBehaviour {
             {
                 Rigidbody rigidGrHook;
                 rigidGrHook = Instantiate(grapplingHook, mouseP, rb.rotation) as Rigidbody;
+
+                float grappleAngle = Mathf.Atan((rb.transform.position.y - mouseP.y) / (rb.transform.position.x - mouseP.x));
+
+                if (mouseP.x - rb.transform.position.x < 0)
+                {
+                    grThrowSpeed = -grThrowSpeed;
+                }
+
+                Debug.Log(grappleAngle);
+
+                rigidGrHook.AddForce(grThrowSpeed * Mathf.Cos(grappleAngle), grThrowSpeed * Mathf.Sin(grappleAngle), 0);
+
+                grThrowSpeed = Mathf.Abs(grThrowSpeed);
             }
 
             //Mouse controles
