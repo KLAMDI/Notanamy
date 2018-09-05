@@ -24,7 +24,7 @@ public class Player : MonoBehaviour {
     public float airJumpMultiplier;
     public int maxAirJumps;
     int airJumps;
-    
+
     //gravity
     public float gravity;
     public float wallGravity;
@@ -61,7 +61,7 @@ public class Player : MonoBehaviour {
     public float attackRange;
 
     // Use this for initialization
-    void Start () {
+    void Start() {
         //Get the nessesarie components
         rb = gameObject.GetComponent<Rigidbody>();
         col = gameObject.GetComponent<Collider>();
@@ -74,10 +74,10 @@ public class Player : MonoBehaviour {
     }
 
     //Checks if the player in on the ground using 5 raycast to minimize the area not checked and returns a boolian
-    bool IsGrounded(){
+    bool IsGrounded() {
         bool OnGround1 = Physics.Raycast(transform.position, -Vector3.up, distToGround + 0.1f);
-        bool OnGround2 = Physics.Raycast(new Vector3(transform.position.x - transform.localScale.x/2 + 0.01f, transform.position.y, transform.position.z), -Vector3.up, distToGround + 0.1f);
-        bool OnGround3 = Physics.Raycast(new Vector3(transform.position.x + transform.localScale.x/2 - 0.01f, transform.position.y, transform.position.z), -Vector3.up, distToGround + 0.1f);
+        bool OnGround2 = Physics.Raycast(new Vector3(transform.position.x - transform.localScale.x / 2 + 0.01f, transform.position.y, transform.position.z), -Vector3.up, distToGround + 0.1f);
+        bool OnGround3 = Physics.Raycast(new Vector3(transform.position.x + transform.localScale.x / 2 - 0.01f, transform.position.y, transform.position.z), -Vector3.up, distToGround + 0.1f);
         bool OnGround4 = Physics.Raycast(new Vector3(transform.position.x - transform.localScale.x / 4, transform.position.y, transform.position.z), -Vector3.up, distToGround + 0.1f);
         bool OnGround5 = Physics.Raycast(new Vector3(transform.position.x + transform.localScale.x / 4, transform.position.y, transform.position.z), -Vector3.up, distToGround + 0.1f);
         bool OnGround = (OnGround1 || OnGround2 || OnGround3 || OnGround4 || OnGround5);
@@ -120,7 +120,7 @@ public class Player : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update ()
+    void Update()
     {
         //Mouse Position
         mouseP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -210,7 +210,7 @@ public class Player : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.W))
             {
                 //Check if the player not on a wall in the air or if the player in on the ground
-                if (!(OnLeftWall() || OnRightWall()) || IsGrounded()){
+                if (!(OnLeftWall() || OnRightWall()) || IsGrounded()) {
                     //Jumping while on the ground is higher
                     if (IsGrounded())
                     {
@@ -249,7 +249,7 @@ public class Player : MonoBehaviour {
             }
 
             //Double tap to dash, type 1
-            if (dashAbl1 && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)) )
+            if (dashAbl1 && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)))
             {
                 //Is true if double tapped, count is number of taps minus 1
                 if (dashTimer > 0 && dashTapCount == 1)
@@ -273,7 +273,7 @@ public class Player : MonoBehaviour {
             }
 
             //Double tap to dash, type 2
-            if (dashAbl2 && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)) )
+            if (dashAbl2 && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)))
             {
                 //Is true if double tapped, count is number of taps minus 1
                 if (dashTimer > 0 && dashTapCount == 1)
@@ -325,21 +325,7 @@ public class Player : MonoBehaviour {
             //Throw a grappling hook using the R button
             if (GrHAbl && Input.GetKeyDown(KeyCode.R))
             {
-                Rigidbody rigidGrHook;
-                rigidGrHook = Instantiate(grapplingHook, mouseP, rb.rotation) as Rigidbody;
-
-                float grappleAngle = Mathf.Atan((rb.transform.position.y - mouseP.y) / (rb.transform.position.x - mouseP.x));
-
-                if (mouseP.x - rb.transform.position.x < 0)
-                {
-                    grThrowSpeed = -grThrowSpeed;
-                }
-
-                Debug.Log(grappleAngle);
-
-                rigidGrHook.AddForce(grThrowSpeed * Mathf.Cos(grappleAngle), grThrowSpeed * Mathf.Sin(grappleAngle), 0);
-
-                grThrowSpeed = Mathf.Abs(grThrowSpeed);
+                grapplingHookSpawn();
             }
 
             //Mouse controles
@@ -368,4 +354,23 @@ public class Player : MonoBehaviour {
 
         }
     }
+
+    //Grappling hook ability
+    void grapplingHookSpawn()
+    {
+        Rigidbody rigidGrHook;
+        rigidGrHook = Instantiate(grapplingHook, mouseP, rb.rotation) as Rigidbody;
+
+        float grappleAngle = Mathf.Atan((rb.transform.position.y - mouseP.y) / (rb.transform.position.x - mouseP.x));
+
+        if (mouseP.x - rb.transform.position.x < 0)
+        {
+            grThrowSpeed = -grThrowSpeed;
+        }
+
+        rigidGrHook.AddForce(grThrowSpeed * Mathf.Cos(grappleAngle), grThrowSpeed * Mathf.Sin(grappleAngle), 0);
+        grThrowSpeed = Mathf.Abs(grThrowSpeed);
+
+    }
+
 }
