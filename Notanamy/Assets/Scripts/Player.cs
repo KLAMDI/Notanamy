@@ -358,11 +358,23 @@ public class Player : MonoBehaviour {
     //Grappling hook ability
     void grapplingHookSpawn()
     {
+
+        //Recalls the grappling hook if you press R again
+        if (GameObject.Find("Grappling Hook(Clone)") != null)
+        {
+            Destroy(GameObject.Find("Grappling Hook(Clone)"));
+            return;
+        }
+
         Rigidbody rigidGrHook;
-        rigidGrHook = Instantiate(grapplingHook, mouseP, rb.rotation) as Rigidbody;
 
+        //The hook cannot be spawned past given maximum range, calculating where that is
         float grappleAngle = Mathf.Atan((rb.transform.position.y - mouseP.y) / (rb.transform.position.x - mouseP.x));
+        Vector3 grapplePos = new Vector3(rb.transform.position.x, rb.transform.position.y, 0);
 
+        rigidGrHook = Instantiate(grapplingHook, grapplePos, rb.rotation) as Rigidbody;
+
+        //Reversing magnitude in the negative x quadrant to make sure the hook always moves away from the player
         if (mouseP.x - rb.transform.position.x < 0)
         {
             grThrowSpeed = -grThrowSpeed;
