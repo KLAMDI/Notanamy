@@ -140,12 +140,26 @@ MonoBehaviour:
   speed: 20
   minSpeed: 0.2
   maxSpeed: 15
-  drag: 20
-  airDragTest: 1
   jumpSpeed: 8
   airJumpMultiplier: 0.75
   maxAirJumps: 0
+  drag: 20
+  airDragTest: 1
   gravity: 8
   wallGravity: 2
   fallingMultiplier: 2.5
   lowJumpMultiplier: 2
+  dashAbl1: 0
+  dashAbl2: 0
+  maxDashLength: 0
+  dashTimer: 0
+  dashSpeed: 0
+  GrHAbl: 0
+  grThrowSpeed: 100
+  grapplingHook: {fileID: 54405227180230348, guid: 04872c2503d4712429959092ab32848e,
+    type: 2}
+  attackOn: 0
+  attack: {fileID: 1017879631816838, guid: d88debb4ac30ae749b88e2d69526491a, type: 2}
+  attackRange: 1.5
+  attackV2On: 1
+  detectionAngle: 25

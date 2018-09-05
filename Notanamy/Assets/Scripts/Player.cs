@@ -15,16 +15,18 @@ public class Player : MonoBehaviour {
     public float minSpeed;
     public float maxSpeed;
 
-    //drag
-    public float drag;
-    public bool airDragTest;
-
     //Y movement
     public float jumpSpeed;
     public float airJumpMultiplier;
     public int maxAirJumps;
     int airJumps;
-    
+
+    //drag
+    public float drag;
+    public bool airDragTest;
+
+
+
     //gravity
     public float gravity;
     public float wallGravity;
@@ -56,9 +58,30 @@ public class Player : MonoBehaviour {
     private float distToWall;
 
     //Attack
+    float anglePlayerMouse;
+    //Attack type 1
     public bool attackOn;
     public GameObject attack;
     public float attackRange;
+    
+    //Attack type 2
+        public bool attackV2On;
+        int comboCounter;
+        int comboState;
+        int comboTimer;
+        //False = left | True = right
+        bool attackSide;
+        public int detectionAngle;
+        /* Attack direction
+         * 1 = TopRight
+         * 2 = MiddleRight
+         * 3 = DownRight
+         * 4 = TopLeft
+         * 5 = Middleleft
+         * 6 = DownLeft */
+        int attackDirection;
+        bool usingAttackV2;
+
 
     // Use this for initialization
     void Start () {
@@ -361,6 +384,78 @@ public class Player : MonoBehaviour {
                         }
                         GameObject tempAttack = Instantiate(attack);
                         tempAttack.transform.position = tempPos;
+
+                    }
+                }
+
+                //Predetermind attack combos 
+                if (attackV2On)
+                {
+                    //An attack will be triggered on mouse
+                    if ((Input.GetMouseButtonDown(0)) && (!usingAttackV2))
+                    {
+                        //Calculate attack direction based on player and mouse position
+                        {
+                            //Calculate the angle between player and mouse
+                            anglePlayerMouse = AngleBetweenPoints(gameObject.transform.position, mouseP);
+
+                            //Attack Side default right
+                            attackSide = true;
+
+                            //Detect if clicking on the left
+                            if (gameObject.transform.position.x > mouseP.x)
+                            {
+                                //Invert angle when clicking left
+                                anglePlayerMouse = -anglePlayerMouse;
+                                //When clicking left attack side is left
+                                attackSide = false;
+                            }
+
+                            //Change radian to degrees
+                            anglePlayerMouse = Mathf.Rad2Deg * anglePlayerMouse;
+
+                            //If you attack to the right
+                            if (attackSide)
+                            {
+                                //Above detectionAngle degrees you attack up
+                                if (anglePlayerMouse > detectionAngle)
+                                {
+                                    //Attack up right
+                                    attackDirection = 1;
+                                }
+                                //Below -detectionAngle degees you attack down
+                                else if (anglePlayerMouse < -detectionAngle)
+                                {
+                                    //Attack down right
+                                    attackDirection = 3;
+                                }
+                                //Between -detectionAngle and detectionAngle degrees you attack middle
+                                else
+                                {
+                                    //Attack middle right
+                                    attackDirection = 2;
+                                }
+                            }
+                            //If you attack to the left
+                            else
+                            {
+                                //Above detectionAngle degrees you attack up
+                                if (anglePlayerMouse > detectionAngle)
+                                {
+                                    attackDirection = 4;
+                                }
+                                //Below -detectionAngle degees you attack down
+                                else if (anglePlayerMouse < -detectionAngle)
+                                {
+                                    attackDirection = 6;
+                                }
+                                //Between -detectionAngle and detectionAngle degrees you attack middle
+                                else
+                                {
+                                    attackDirection = 5;
+                                }
+                            }
+                        }
 
                     }
                 }

@@ -450,7 +450,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4949575158264910, guid: c7e5cbded2365814ab2da1c5fb8ae160, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4949575158264910, guid: c7e5cbded2365814ab2da1c5fb8ae160, type: 2}
       propertyPath: m_LocalPosition.z
@@ -475,22 +475,6 @@ Prefab:
     - target: {fileID: 4949575158264910, guid: c7e5cbded2365814ab2da1c5fb8ae160, type: 2}
       propertyPath: m_RootOrder
       value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
-        type: 2}
-      propertyPath: attack
-      value: 
-      objectReference: {fileID: 1017879631816838, guid: d88debb4ac30ae749b88e2d69526491a,
-        type: 2}
-    - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
-        type: 2}
-      propertyPath: attackRange
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
-        type: 2}
-      propertyPath: gravity
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c7e5cbded2365814ab2da1c5fb8ae160, type: 2}
