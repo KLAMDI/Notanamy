@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 90617683}
   m_Layer: 0
   m_Name: Pit Wall Left
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -211,7 +211,7 @@ GameObject:
   - component: {fileID: 291561672}
   m_Layer: 0
   m_Name: Pit Floor
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -296,7 +296,7 @@ GameObject:
   - component: {fileID: 467795854}
   m_Layer: 0
   m_Name: Floor (1)
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -381,7 +381,7 @@ GameObject:
   - component: {fileID: 682505485}
   m_Layer: 0
   m_Name: Pit Wall Right
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -532,7 +532,7 @@ GameObject:
   - component: {fileID: 1870794513}
   m_Layer: 0
   m_Name: Floor
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -617,7 +617,7 @@ GameObject:
   - component: {fileID: 1967298335}
   m_Layer: 0
   m_Name: Wall
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -797,7 +797,7 @@ Prefab:
     - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
         type: 2}
       propertyPath: attackOn
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
         type: 2}
@@ -813,7 +813,7 @@ Prefab:
     - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
         type: 2}
       propertyPath: grThrowSpeed
-      value: 200
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c7e5cbded2365814ab2da1c5fb8ae160, type: 2}
