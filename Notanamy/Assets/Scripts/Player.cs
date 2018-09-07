@@ -21,15 +21,10 @@ public class Player : MonoBehaviour {
     public int maxAirJumps;
     int airJumps;
 
-<<<<<<< HEAD
     //drag
     public float drag;
     public bool airDragTest;
 
-
-
-=======
->>>>>>> ed427b88180701feebfcfd8ca82ede78788b3b1c
     //gravity
     public float gravity;
     public float wallGravity;
