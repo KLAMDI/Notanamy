@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -773,47 +773,6 @@ Prefab:
     - target: {fileID: 4949575158264910, guid: c7e5cbded2365814ab2da1c5fb8ae160, type: 2}
       propertyPath: m_RootOrder
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
-        type: 2}
-      propertyPath: dashAbl2
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
-        type: 2}
-      propertyPath: GrHAbl
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
-        type: 2}
-      propertyPath: grapplingHook
-      value: 
-      objectReference: {fileID: 54405227180230348, guid: 04872c2503d4712429959092ab32848e,
-        type: 2}
-    - target: {fileID: 1098213216113808, guid: c7e5cbded2365814ab2da1c5fb8ae160, type: 2}
-      propertyPath: m_TagString
-      value: Untagged
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
-        type: 2}
-      propertyPath: attackOn
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
-        type: 2}
-      propertyPath: attack
-      value: 
-      objectReference: {fileID: 1017879631816838, guid: d88debb4ac30ae749b88e2d69526491a,
-        type: 2}
-    - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
-        type: 2}
-      propertyPath: attackRange
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
-        type: 2}
-      propertyPath: grThrowSpeed
-      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c7e5cbded2365814ab2da1c5fb8ae160, type: 2}

@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 114000810076891368}
   - component: {fileID: 54094957505148092}
   - component: {fileID: 65316971300121726}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39,7 +39,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1098213216113808}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0.67, y: 5.16, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -150,16 +150,16 @@ MonoBehaviour:
   fallingMultiplier: 2.5
   lowJumpMultiplier: 2
   dashAbl1: 0
-  dashAbl2: 0
+  dashAbl2: 1
   maxDashLength: 0
   dashTimer: 0
   dashSpeed: 0
-  GrHAbl: 0
+  GrHAbl: 1
   grThrowSpeed: 100
   grapplingHook: {fileID: 54405227180230348, guid: 04872c2503d4712429959092ab32848e,
     type: 2}
   attackOn: 0
   attack: {fileID: 1017879631816838, guid: d88debb4ac30ae749b88e2d69526491a, type: 2}
-  attackRange: 1.5
+  attackRange: 3
   attackV2On: 1
   detectionAngle: 25
