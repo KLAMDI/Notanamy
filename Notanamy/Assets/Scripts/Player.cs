@@ -48,7 +48,10 @@ public class Player : MonoBehaviour {
     //Grappling Hook
     public bool GrHAbl;
     public float grThrowSpeed;
+    public float grappleLength;
+    public float grapplePullStrength;
     public Rigidbody grapplingHook;
+    Rigidbody rigidGrHook;
 
     //collision ditection
     private Collider col;
@@ -344,9 +347,33 @@ public class Player : MonoBehaviour {
             }
 
             //Throw a grappling hook using the R button
-            if (GrHAbl && Input.GetKeyDown(KeyCode.R))
+            if (GrHAbl)
             {
-                grapplingHookSpawn();
+
+                if (Input.GetKeyDown(KeyCode.R))
+                {
+                    grapplingHookSpawn();
+                }
+
+                //If the grappling hook exists and is frozen, pull the player toward it
+                if (rigidGrHook)
+                {
+                    if (rigidGrHook.constraints == RigidbodyConstraints.FreezePosition)
+                    {
+
+                        //Pulls the player in if they're past the maximum grapple length
+                        float grappleplayerDistance = Vector3.Distance(rb.transform.position, rigidGrHook.transform.position);
+                        Debug.Log(grappleplayerDistance);
+
+                        if (grappleplayerDistance > grappleLength)
+                        {
+
+                            rb.transform.position = rigidGrHook.transform.position + (rb.transform.position - rigidGrHook.transform.position)*grappleLength/grappleplayerDistance;
+
+                        }
+                    }
+                }
+
             }
 
             //Mouse controles
@@ -459,22 +486,19 @@ public class Player : MonoBehaviour {
             return;
         }
 
-        Rigidbody rigidGrHook;
-
         //The hook cannot be spawned past given maximum range, calculating where that is
         float grappleAngle = Mathf.Atan((rb.transform.position.y - mouseP.y) / (rb.transform.position.x - mouseP.x));
         Vector3 grapplePos = new Vector3(rb.transform.position.x, rb.transform.position.y, 0);
 
         rigidGrHook = Instantiate(grapplingHook, grapplePos, rb.rotation) as Rigidbody;
 
-        //Reversing magnitude in the negative x quadrant to make sure the hook always moves away from the player
+        //Adding Pi to the angle in the negative x quadrant to make sure the hook always moves away from the player
         if (mouseP.x - rb.transform.position.x < 0)
         {
-            grThrowSpeed = -grThrowSpeed;
+            grappleAngle += Mathf.PI;
         }
 
         rigidGrHook.AddForce(grThrowSpeed * Mathf.Cos(grappleAngle), grThrowSpeed * Mathf.Sin(grappleAngle), 0);
-        grThrowSpeed = Mathf.Abs(grThrowSpeed);
 
     }
 
