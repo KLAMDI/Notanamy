@@ -476,6 +476,37 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
+        type: 2}
+      propertyPath: attackOn
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
+        type: 2}
+      propertyPath: attackV2On
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c7e5cbded2365814ab2da1c5fb8ae160, type: 2}
   m_IsPrefabAsset: 0
+--- !u!1 &2067321280 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1098213216113808, guid: c7e5cbded2365814ab2da1c5fb8ae160,
+    type: 2}
+  m_PrefabInternal: {fileID: 2067321279}
+--- !u!114 &2067321281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2067321280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61045cb0aef11f74fa8b147398217b7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackHitbox: {fileID: 1017879631816838, guid: d88debb4ac30ae749b88e2d69526491a,
+    type: 2}
+  attackV2On: 1
+  comboCounter: 0
+  detectionAngle: 25
