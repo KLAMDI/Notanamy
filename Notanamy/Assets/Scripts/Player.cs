@@ -358,12 +358,19 @@ public class Player : MonoBehaviour {
                 //If the grappling hook exists and is frozen, pull the player toward it
                 if (rigidGrHook)
                 {
+
+                    //Pulls the player in if they're past the maximum grapple length
+                    float grappleplayerDistance = Vector3.Distance(rb.transform.position, rigidGrHook.transform.position);
+
                     if (rigidGrHook.constraints == RigidbodyConstraints.FreezePosition)
                     {
+                        float grappleAngle = Mathf.Atan((rb.transform.position.y - rigidGrHook.transform.position.y) / (rb.transform.position.x - rigidGrHook.transform.position.x));
 
-                        //Pulls the player in if they're past the maximum grapple length
-                        float grappleplayerDistance = Vector3.Distance(rb.transform.position, rigidGrHook.transform.position);
-                        Debug.Log(grappleplayerDistance);
+                        //Adding Pi to the angle in the negative x quadrant to make sure the hook always moves away from the player
+                        if (rigidGrHook.transform.position.x - rb.transform.position.x < 0)
+                        {
+                            grappleAngle += Mathf.PI;
+                        }
 
                         if (grappleplayerDistance > grappleLength)
                         {
@@ -371,6 +378,11 @@ public class Player : MonoBehaviour {
                             rb.transform.position = rigidGrHook.transform.position + (rb.transform.position - rigidGrHook.transform.position)*grappleLength/grappleplayerDistance;
 
                         }
+                    }
+
+                    else if (grappleplayerDistance > grappleLength)
+                    {
+                        rigidGrHook.transform.position = rb.transform.position + (rigidGrHook.transform.position - rb.transform.position) * grappleLength / grappleplayerDistance;
                     }
                 }
 
