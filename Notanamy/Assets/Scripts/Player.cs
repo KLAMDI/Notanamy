@@ -98,7 +98,7 @@ public class Player : MonoBehaviour {
     }
 
     //Checks if the player in on the ground using 5 raycast to minimize the area not checked and returns a boolian
-    bool IsGrounded() {
+    public bool IsGrounded() {
         bool OnGround1 = Physics.Raycast(transform.position, -Vector3.up, distToGround + 0.1f);
         bool OnGround2 = Physics.Raycast(new Vector3(transform.position.x - transform.localScale.x / 2 + 0.01f, transform.position.y, transform.position.z), -Vector3.up, distToGround + 0.1f);
         bool OnGround3 = Physics.Raycast(new Vector3(transform.position.x + transform.localScale.x / 2 - 0.01f, transform.position.y, transform.position.z), -Vector3.up, distToGround + 0.1f);
