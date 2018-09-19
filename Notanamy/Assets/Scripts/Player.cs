@@ -348,8 +348,7 @@ public class Player : MonoBehaviour {
 
                         if (rigidGrHook.constraints == RigidbodyConstraints.FreezePosition)
                         {
-                            float grappleAngle = Mathf.Atan((rb.transform.position.y - rigidGrHook.transform.position.y) / (rb.transform.position.x - rigidGrHook.transform.position.x));
-
+                            float grappleAngle = Mathf.Atan((rigidGrHook.transform.position.x - rb.transform.position.x) / (rigidGrHook.transform.position.y - rb.transform.position.y));
                             //Adding Pi to the angle in the negative x quadrant to make sure the hook always moves away from the player
                             if (rigidGrHook.transform.position.x - rb.transform.position.x < 0)
                             {
@@ -360,7 +359,25 @@ public class Player : MonoBehaviour {
                             {
 
                                 rb.transform.position = rigidGrHook.transform.position + (rb.transform.position - rigidGrHook.transform.position) * grappleLength / grappleplayerDistance;
+                                Vector3 grapDir = (rigidGrHook.transform.position - rb.transform.position).normalized;
 
+                                //Tension force
+                                float grapTension = rb.velocity.sqrMagnitude / grappleLength + gravity * Mathf.Cos(grappleAngle);
+                                Debug.Log(grapTension);
+                                rb.AddForce(grapTension * grapDir);
+
+                                //Horizontal force due to gravity
+                                if (rigidGrHook.transform.position.x - rb.transform.position.x < 0)
+                                {
+                                    grapDir = new Vector3(grapDir.y, -grapDir.x, 0);
+                                }
+                                else
+                                {
+                                     grapDir = new Vector3(-grapDir.y, grapDir.x, 0);
+                                }
+                                
+                                rb.AddForce(-gravity * Mathf.Sin(grappleAngle) * grapDir);
+                                
                             }
                         }
 
@@ -368,6 +385,7 @@ public class Player : MonoBehaviour {
                         {
                             rigidGrHook.transform.position = rb.transform.position + (rigidGrHook.transform.position - rb.transform.position) * grappleLength / grappleplayerDistance;
                         }
+
                     }
 
                 }
