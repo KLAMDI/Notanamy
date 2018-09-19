@@ -348,8 +348,7 @@ public class Player : MonoBehaviour {
 
                         if (rigidGrHook.constraints == RigidbodyConstraints.FreezePosition)
                         {
-                            float grappleAngle = Mathf.Atan((rb.transform.position.y - rigidGrHook.transform.position.y) / (rb.transform.position.x - rigidGrHook.transform.position.x));
-
+                            float grappleAngle = Mathf.Atan((rigidGrHook.transform.position.x - rb.transform.position.x) / (rigidGrHook.transform.position.y - rb.transform.position.y));
                             //Adding Pi to the angle in the negative x quadrant to make sure the hook always moves away from the player
                             if (rigidGrHook.transform.position.x - rb.transform.position.x < 0)
                             {
@@ -359,15 +358,34 @@ public class Player : MonoBehaviour {
                             if (grappleplayerDistance > grappleLength)
                             {
 
-                                rb.transform.position = rigidGrHook.transform.position + (rb.transform.position - rigidGrHook.transform.position) * grappleLength / grappleplayerDistance;
+                                //rb.transform.position = rigidGrHook.transform.position + (rb.transform.position - rigidGrHook.transform.position) * grappleLength / grappleplayerDistance;
+                                Vector3 grapDir = (rigidGrHook.transform.position - rb.transform.position).normalized;
 
+                                //Tension force
+                                float grapTension = Mathf.Pow(Vector3.Dot(rb.velocity, grapDir), 2) / grappleLength + gravity * Mathf.Cos(grappleAngle);
+                                rb.AddForce(grapTension * grapDir * 50);
+
+                                //Horizontal force due to gravity
+                                if (rigidGrHook.transform.position.x - rb.transform.position.x < 0)
+                                {
+                                    grapDir = new Vector3(grapDir.y, -grapDir.x, 0);
+                                }
+                                else
+                                {
+                                     grapDir = new Vector3(-grapDir.y, grapDir.x, 0);
+                                }
+                                
+                                rb.AddForce(-gravity * Mathf.Sin(grappleAngle) * grapDir);
+                                Debug.Log(Mathf.Atan(grapDir.y / grapDir.x));
+                                
                             }
                         }
 
-                        else if (grappleplayerDistance > grappleLength)
-                        {
-                            rigidGrHook.transform.position = rb.transform.position + (rigidGrHook.transform.position - rb.transform.position) * grappleLength / grappleplayerDistance;
-                        }
+                        //else if (grappleplayerDistance > grappleLength)
+                        //{
+                        //    rigidGrHook.transform.position = rb.transform.position + (rigidGrHook.transform.position - rb.transform.position) * grappleLength / grappleplayerDistance;
+                        //}
+
                     }
 
                 }
