@@ -10,6 +10,9 @@ public class Player : MonoBehaviour {
     //Rigidbody
     private Rigidbody rb;
 
+    //Restrictions
+    public bool allowMovement = true;
+
     //X movement
     public float speed;
     public float minSpeed;
@@ -60,28 +63,6 @@ public class Player : MonoBehaviour {
 
     //Attack
     float anglePlayerMouse;
-    //Attack type 1
-    public bool attackOn;
-    public GameObject attack;
-    public float attackRange;
-    
-    //Attack type 2
-        public bool attackV2On;
-        int comboCounter;
-        int comboState;
-        int comboTimer;
-        //False = left | True = right
-        bool attackSide;
-        public int detectionAngle;
-        /* Attack direction
-         * 1 = TopRight
-         * 2 = MiddleRight
-         * 3 = DownRight
-         * 4 = TopLeft
-         * 5 = Middleleft
-         * 6 = DownLeft */
-        int attackDirection;
-        bool usingAttackV2;
 
 
     // Use this for initialization
@@ -220,270 +201,177 @@ public class Player : MonoBehaviour {
 
         //Controls
         {
-            //Movement controls
-            if (Input.GetKey(KeyCode.A) && !(Input.GetKey(KeyCode.D)))
+            if (allowMovement)
             {
-                rb.AddForce(-speed, 0, 0);
-            }
-            if (Input.GetKey(KeyCode.D) && !(Input.GetKey(KeyCode.A)))
-            {
-                rb.AddForce(speed, 0, 0);
-            }
+                //Movement controls
+                if (Input.GetKey(KeyCode.A) && !(Input.GetKey(KeyCode.D)))
+                {
+                    rb.AddForce(-speed, 0, 0);
+                }
+                if (Input.GetKey(KeyCode.D) && !(Input.GetKey(KeyCode.A)))
+                {
+                    rb.AddForce(speed, 0, 0);
+                }
 
-            //Press up to jump
-            if (Input.GetKeyDown(KeyCode.W))
-            {
-                //Check if the player not on a wall in the air or if the player in on the ground
-                if (!(OnLeftWall() || OnRightWall()) || IsGrounded()) {
-                    //Jumping while on the ground is higher
-                    if (IsGrounded())
+                //Press up to jump
+                if (Input.GetKeyDown(KeyCode.W))
+                {
+                    //Check if the player not on a wall in the air or if the player in on the ground
+                    if (!(OnLeftWall() || OnRightWall()) || IsGrounded())
                     {
-                        rb.AddForce(new Vector3(0, jumpSpeed, 0), ForceMode.VelocityChange);
+                        //Jumping while on the ground is higher
+                        if (IsGrounded())
+                        {
+                            rb.AddForce(new Vector3(0, jumpSpeed, 0), ForceMode.VelocityChange);
+                        }
+                        //Check if any air jumps are remaining and airjumps are effected by airjump multiplier
+                        else if (airJumps > 0)
+                        {
+                            rb.AddForce(new Vector3(0, jumpSpeed * airJumpMultiplier, 0) - new Vector3(0, rb.velocity.y, 0), ForceMode.VelocityChange);
+                            airJumps--;
+                        }
                     }
-                    //Check if any air jumps are remaining and airjumps are effected by airjump multiplier
-                    else if (airJumps > 0)
+                    //If on a wall in the air do a walljump
+                    else
                     {
-                        rb.AddForce(new Vector3(0, jumpSpeed * airJumpMultiplier, 0) - new Vector3(0, rb.velocity.y, 0), ForceMode.VelocityChange);
-                        airJumps--;
+                        //On Left wall jump right
+                        if (OnLeftWall())
+                        {
+                            rb.AddForce(new Vector3(jumpSpeed, jumpSpeed, 0) - new Vector3(0, rb.velocity.y, 0), ForceMode.VelocityChange);
+                        }
+                        //On right wall jumo left
+                        if (OnRightWall())
+                        {
+                            rb.AddForce(new Vector3(-jumpSpeed, jumpSpeed, 0) - new Vector3(0, rb.velocity.y, 0), ForceMode.VelocityChange);
+                        }
                     }
                 }
-                //If on a wall in the air do a walljump
+                //While in the air press down to cancel jump and fall down faster
+                if ((Input.GetKeyDown(KeyCode.S)) && !IsGrounded())
+                {
+                    //Limmit the downwards speed achieved with downfall
+                    if (rb.velocity.y > (-3 * jumpSpeed))
+                    {
+                        rb.velocity = new Vector3(rb.velocity.x, -3 * jumpSpeed, 0);
+                    }
+                }
+
+                //Double tap to dash, type 1
+                if (dashAbl1 && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)))
+                {
+                    //Is true if double tapped, count is number of taps minus 1
+                    if (dashTimer > 0 && dashTapCount == 1)
+                    {
+                        if (Input.GetKeyDown(KeyCode.A))
+                        {
+                            rb.AddForce(-dashSpeed, 0, 0);
+                        }
+
+                        if (Input.GetKeyDown(KeyCode.D))
+                        {
+                            rb.AddForce(dashSpeed, 0, 0);
+                        }
+                    }
+
+                    else
+                    {
+                        dashTimer = dashTimerInit;
+                        dashTapCount += 1;
+                    }
+                }
+
+                //Double tap to dash, type 2
+                if (dashAbl2 && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)))
+                {
+                    //Is true if double tapped, count is number of taps minus 1
+                    if (dashTimer > 0 && dashTapCount == 1)
+                    {
+                        //Makes dash go left
+                        if (Input.GetKeyDown(KeyCode.A))
+                        {
+                            dashSpeed = -dashSpeed;
+                        }
+
+                        isDashing = true;
+                    }
+
+                    else
+                    {
+                        dashTimer = dashTimerInit;
+                        dashTapCount += 1;
+                    }
+                }
+
+                //Updating dashtimer
+                if (dashTimer > 0 && (dashAbl1 || dashAbl2))
+                {
+                    dashTimer -= 1 * Time.deltaTime;
+                }
+
                 else
                 {
-                    //On Left wall jump right
-                    if (OnLeftWall())
-                    {
-                        rb.AddForce(new Vector3(jumpSpeed, jumpSpeed, 0) - new Vector3(0, rb.velocity.y, 0), ForceMode.VelocityChange);
-                    }
-                    //On right wall jumo left
-                    if (OnRightWall())
-                    {
-                        rb.AddForce(new Vector3(-jumpSpeed, jumpSpeed, 0) - new Vector3(0, rb.velocity.y, 0), ForceMode.VelocityChange);
-                    }
+                    dashTapCount = 0;
                 }
-            }
-            //While in the air press down to cancel jump and fall down faster
-            if ((Input.GetKeyDown(KeyCode.S)) && !IsGrounded())
-            {
-                //Limmit the downwards speed achieved with downfall
-                if (rb.velocity.y > (-3 * jumpSpeed))
+
+                //Stops dash once max length has been reached
+                if (isDashing && dashLength > 0)
                 {
-                    rb.velocity = new Vector3(rb.velocity.x, -3 * jumpSpeed, 0);
+                    dashLength -= 1 * Time.deltaTime;
+                    rb.AddForce(dashSpeed, 0, 0);
+                    rb.constraints = ~RigidbodyConstraints.FreezePositionX;
                 }
-            }
-
-            //Double tap to dash, type 1
-            if (dashAbl1 && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)))
-            {
-                //Is true if double tapped, count is number of taps minus 1
-                if (dashTimer > 0 && dashTapCount == 1)
-                {
-                    if (Input.GetKeyDown(KeyCode.A))
-                    {
-                        rb.AddForce(-dashSpeed, 0, 0);
-                    }
-
-                    if (Input.GetKeyDown(KeyCode.D))
-                    {
-                        rb.AddForce(dashSpeed, 0, 0);
-                    }
-                }
-
                 else
                 {
-                    dashTimer = dashTimerInit;
-                    dashTapCount += 1;
-                }
-            }
+                    dashLength = maxDashLength;
+                    isDashing = false;
+                    rb.constraints &= ~RigidbodyConstraints.FreezePositionY;
 
-            //Double tap to dash, type 2
-            if (dashAbl2 && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)))
-            {
-                //Is true if double tapped, count is number of taps minus 1
-                if (dashTimer > 0 && dashTapCount == 1)
+                    //Resets dash to right side
+                    dashSpeed = Mathf.Abs(dashSpeed);
+                }
+
+                //Throw a grappling hook using the R button
+                if (GrHAbl)
                 {
-                    //Makes dash go left
-                    if (Input.GetKeyDown(KeyCode.A))
+
+                    if (Input.GetKeyDown(KeyCode.R))
                     {
-                        dashSpeed = -dashSpeed;
+                        grapplingHookSpawn();
                     }
 
-                    isDashing = true;
-                }
-
-                else
-                {
-                    dashTimer = dashTimerInit;
-                    dashTapCount += 1;
-                }
-            }
-
-            //Updating dashtimer
-            if (dashTimer > 0 && (dashAbl1 || dashAbl2))
-            {
-                dashTimer -= 1 * Time.deltaTime;
-            }
-
-            else
-            {
-                dashTapCount = 0;
-            }
-
-            //Stops dash once max length has been reached
-            if (isDashing && dashLength > 0)
-            {
-                dashLength -= 1 * Time.deltaTime;
-                rb.AddForce(dashSpeed, 0, 0);
-                rb.constraints = ~RigidbodyConstraints.FreezePositionX;
-            }
-            else
-            {
-                dashLength = maxDashLength;
-                isDashing = false;
-                rb.constraints &= ~RigidbodyConstraints.FreezePositionY;
-
-                //Resets dash to right side
-                dashSpeed = Mathf.Abs(dashSpeed);
-            }
-
-            //Throw a grappling hook using the R button
-            if (GrHAbl)
-            {
-
-                if (Input.GetKeyDown(KeyCode.R))
-                {
-                    grapplingHookSpawn();
-                }
-
-                //If the grappling hook exists and is frozen, pull the player toward it
-                if (rigidGrHook)
-                {
-
-                    //Pulls the player in if they're past the maximum grapple length
-                    float grappleplayerDistance = Vector3.Distance(rb.transform.position, rigidGrHook.transform.position);
-
-                    if (rigidGrHook.constraints == RigidbodyConstraints.FreezePosition)
+                    //If the grappling hook exists and is frozen, pull the player toward it
+                    if (rigidGrHook)
                     {
-                        float grappleAngle = Mathf.Atan((rb.transform.position.y - rigidGrHook.transform.position.y) / (rb.transform.position.x - rigidGrHook.transform.position.x));
 
-                        //Adding Pi to the angle in the negative x quadrant to make sure the hook always moves away from the player
-                        if (rigidGrHook.transform.position.x - rb.transform.position.x < 0)
+                        //Pulls the player in if they're past the maximum grapple length
+                        float grappleplayerDistance = Vector3.Distance(rb.transform.position, rigidGrHook.transform.position);
+
+                        if (rigidGrHook.constraints == RigidbodyConstraints.FreezePosition)
                         {
-                            grappleAngle += Mathf.PI;
-                        }
+                            float grappleAngle = Mathf.Atan((rb.transform.position.y - rigidGrHook.transform.position.y) / (rb.transform.position.x - rigidGrHook.transform.position.x));
 
-                        if (grappleplayerDistance > grappleLength)
-                        {
-
-                            rb.transform.position = rigidGrHook.transform.position + (rb.transform.position - rigidGrHook.transform.position)*grappleLength/grappleplayerDistance;
-
-                        }
-                    }
-
-                    else if (grappleplayerDistance > grappleLength)
-                    {
-                        rigidGrHook.transform.position = rb.transform.position + (rigidGrHook.transform.position - rb.transform.position) * grappleLength / grappleplayerDistance;
-                    }
-                }
-
-            }
-
-            //Mouse controles
-            {
-                if (attackOn)
-                {
-
-                    if (Input.GetMouseButton(0))
-                    {
-                        Vector3 tempPos = new Vector3(0, 0, 0);
-                        float tempAngle = AngleBetweenPoints(gameObject.transform.position, mouseP);
-                        if (gameObject.transform.position.x < mouseP.x)
-                        {
-                            tempPos = AngleToPosition(tempAngle, attackRange) + gameObject.transform.position;
-                        }
-                        else
-                        {
-                            tempPos = -AngleToPosition(tempAngle, attackRange) + gameObject.transform.position;
-                        }
-                        GameObject tempAttack = Instantiate(attack);
-                        tempAttack.transform.position = tempPos;
-
-                    }
-                }
-
-                //Predetermind attack combos 
-                if (attackV2On)
-                {
-                    //An attack will be triggered on mouse
-                    if ((Input.GetMouseButtonDown(0)) && (!usingAttackV2))
-                    {
-                        //Calculate attack direction based on player and mouse position
-                        {
-                            //Calculate the angle between player and mouse
-                            anglePlayerMouse = AngleBetweenPoints(gameObject.transform.position, mouseP);
-
-                            //Attack Side default right
-                            attackSide = true;
-
-                            //Detect if clicking on the left
-                            if (gameObject.transform.position.x > mouseP.x)
+                            //Adding Pi to the angle in the negative x quadrant to make sure the hook always moves away from the player
+                            if (rigidGrHook.transform.position.x - rb.transform.position.x < 0)
                             {
-                                //Invert angle when clicking left
-                                anglePlayerMouse = -anglePlayerMouse;
-                                //When clicking left attack side is left
-                                attackSide = false;
+                                grappleAngle += Mathf.PI;
                             }
 
-                            //Change radian to degrees
-                            anglePlayerMouse = Mathf.Rad2Deg * anglePlayerMouse;
+                            if (grappleplayerDistance > grappleLength)
+                            {
 
-                            //If you attack to the right
-                            if (attackSide)
-                            {
-                                //Above detectionAngle degrees you attack up
-                                if (anglePlayerMouse > detectionAngle)
-                                {
-                                    //Attack up right
-                                    attackDirection = 1;
-                                }
-                                //Below -detectionAngle degees you attack down
-                                else if (anglePlayerMouse < -detectionAngle)
-                                {
-                                    //Attack down right
-                                    attackDirection = 3;
-                                }
-                                //Between -detectionAngle and detectionAngle degrees you attack middle
-                                else
-                                {
-                                    //Attack middle right
-                                    attackDirection = 2;
-                                }
-                            }
-                            //If you attack to the left
-                            else
-                            {
-                                //Above detectionAngle degrees you attack up
-                                if (anglePlayerMouse > detectionAngle)
-                                {
-                                    attackDirection = 4;
-                                }
-                                //Below -detectionAngle degees you attack down
-                                else if (anglePlayerMouse < -detectionAngle)
-                                {
-                                    attackDirection = 6;
-                                }
-                                //Between -detectionAngle and detectionAngle degrees you attack middle
-                                else
-                                {
-                                    attackDirection = 5;
-                                }
+                                rb.transform.position = rigidGrHook.transform.position + (rb.transform.position - rigidGrHook.transform.position) * grappleLength / grappleplayerDistance;
+
                             }
                         }
 
+                        else if (grappleplayerDistance > grappleLength)
+                        {
+                            rigidGrHook.transform.position = rb.transform.position + (rigidGrHook.transform.position - rb.transform.position) * grappleLength / grappleplayerDistance;
+                        }
                     }
+
                 }
             }
-
         }
     }
 
