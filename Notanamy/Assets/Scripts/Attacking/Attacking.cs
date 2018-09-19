@@ -13,6 +13,8 @@ public class Attacking : MonoBehaviour {
 
     //Prefabs
     public GameObject attackHitbox;
+    GameObject hitboxClone;
+    Hitbox hb;
 
     //Mouse variables
     Vector3 mouseP;
@@ -36,6 +38,8 @@ public class Attacking : MonoBehaviour {
     int attackDirection;
     bool usingAttack = false;
     int attackTimer;
+    bool downAttack = false;
+    int downTimer;
 
 
 
@@ -54,7 +58,7 @@ public class Attacking : MonoBehaviour {
         return angle;
     }
 
-    public void spawnAttack(Vector3 posOffset, int atkTimer, bool spin = false)
+    public GameObject spawnAttack(Vector3 posOffset, int atkTimer, bool spin = false)
     {
         GameObject hitbox = Instantiate(attackHitbox);
         hitbox.transform.position = gameObject.transform.position + posOffset;
@@ -62,6 +66,7 @@ public class Attacking : MonoBehaviour {
         Hitbox boxScript = hitbox.GetComponent<Hitbox>();
         boxScript.attackTimer = atkTimer;
         boxScript.isScytheSpin = spin;
+        return hitbox;
     }
 
     // Use this for initialization
@@ -92,15 +97,26 @@ public class Attacking : MonoBehaviour {
                 player.allowMovement = true;
             }
 
-            if ((comboTimer > 0) && !(usingAttack))
+            if (!usingAttack)
             {
-                comboTimer--;
-            }
-            if (comboTimer <= 0)
-            {
-                comboCounter = 0;
-            }
+                if (comboTimer > 0)
+                {
+                    comboTimer--;
+                }
+                if (comboTimer <= 0)
+                {
+                    comboCounter = 0;
+                }
 
+                if (downTimer >= 0)
+                {
+                    downTimer--;
+                }
+                else
+                {
+                    downAttack = false;
+                }
+            }
             if (usingAttack)
             {
                 player.allowMovement = false;
@@ -175,89 +191,168 @@ public class Attacking : MonoBehaviour {
 
                 //Use attack based on calculated attack direction
                 {
-                    if (player.IsGrounded()) {
-                        switch (attackDirection)
+                    if (player.IsGrounded())
+                    {
+                        if (!downAttack)
                         {
-                            case 1:
-                                break;
-                            case 2:
-                                switch (comboCounter)
-                                {
-                                    case 0:
-                                        attackTimer = 10;
-                                        spawnAttack(new Vector3(1, 0, 0), attackTimer);
-                                        rb.AddForce(new Vector3(200, 0, 0));
-                                        usingAttack = true;
-                                        comboCounter += 1;
-                                        comboTimer = 15;
-                                        break;
-                                    case 1:
-                                        attackTimer = 10;
-                                        spawnAttack(new Vector3(1, 0, 0), attackTimer);
-                                        rb.AddForce(new Vector3(200, 0, 0));
-                                        usingAttack = true;
-                                        comboCounter = 2;
-                                        comboTimer = 15;
-                                        break;
-                                    case 2:
-                                        attackTimer = 40;
-                                        spawnAttack(new Vector3(1, 0, 0), attackTimer, true);
-                                        usingAttack = true;
-                                        comboCounter = 3;
-                                        comboTimer = 15;
-                                        break;
-                                    case 3:
+                            switch (attackDirection)
+                            {
+                                case 1:
+                                    {
                                         attackTimer = 20;
-                                        spawnAttack(new Vector3(1, 0, 0), attackTimer);
-                                        rb.AddForce(new Vector3(400, 0, 0));
+                                        hitboxClone = spawnAttack(new Vector3(1, -0.3f, 0), attackTimer);
+                                        hb = hitboxClone.GetComponent<Hitbox>();
+                                        hb.duration = attackTimer / 2;
+                                        hb.movement = (0.7f / hb.duration) * Vector3.up;
+                                        hb.knockback = new Vector3(100, 500, 0);
+                                        rb.AddForce(new Vector3(200, 600, 0));
                                         usingAttack = true;
                                         comboCounter = 0;
-                                        comboTimer = 0;
-                                        break;
-                                }
-                                break;
-                            case 3:
-                                break;
-                            case 4:
-                                break;
-                            case 5:
-                                switch (comboCounter)
-                                {
-                                    case 0:
+                                        comboTimer = 15;
+                                    }
+                                    break;
+                                case 2:
+                                    {
+                                        switch (comboCounter)
+                                        {
+                                            case 0:
+                                                attackTimer = 10;
+                                                hitboxClone = spawnAttack(new Vector3(1, 0, 0), attackTimer);
+                                                hb = hitboxClone.GetComponent<Hitbox>();
+                                                hb.knockback = new Vector3(50, 0, 0);
+
+                                                rb.AddForce(new Vector3(200, 0, 0));
+                                                usingAttack = true;
+                                                comboCounter += 1;
+                                                comboTimer = 15;
+                                                break;
+                                            case 1:
+                                                attackTimer = 10;
+                                                spawnAttack(new Vector3(1, 0, 0), attackTimer);
+                                                rb.AddForce(new Vector3(200, 0, 0));
+                                                usingAttack = true;
+                                                comboCounter = 2;
+                                                comboTimer = 15;
+                                                break;
+                                            case 2:
+                                                attackTimer = 40;
+                                                spawnAttack(new Vector3(1, 0, 0), attackTimer, true);
+                                                usingAttack = true;
+                                                comboCounter = 3;
+                                                comboTimer = 15;
+                                                break;
+                                            case 3:
+                                                attackTimer = 20;
+                                                spawnAttack(new Vector3(1, 0, 0), attackTimer);
+                                                rb.AddForce(new Vector3(400, 0, 0));
+                                                usingAttack = true;
+                                                comboCounter = 0;
+                                                comboTimer = 0;
+                                                break;
+                                        }
+                                    }
+                                    break;
+                                case 3:
+                                    {
                                         attackTimer = 10;
-                                        spawnAttack(new Vector3(-1, 0, 0), attackTimer);
-                                        rb.AddForce(new Vector3(-200, 0, 0));
-                                        usingAttack = true;
-                                        comboCounter += 1;
-                                        comboTimer = 25;
-                                        break;
-                                    case 1:
-                                        attackTimer = 10;
-                                        spawnAttack(new Vector3(-1, 0, 0), attackTimer);
-                                        rb.AddForce(new Vector3(-200, 0, 0));
-                                        usingAttack = true;
-                                        comboCounter = 2;
-                                        comboTimer = 25;
-                                        break;
-                                    case 2:
-                                        attackTimer = 40;
-                                        spawnAttack(new Vector3(-1, 0, 0), attackTimer, true);
-                                        usingAttack = true;
-                                        comboCounter = 3;
-                                        comboTimer = 25;
-                                        break;
-                                    case 3:
-                                        attackTimer = 20;
-                                        spawnAttack(new Vector3(-1, 0, 0), attackTimer);
-                                        rb.AddForce(new Vector3(-400, 0, 0));
+                                        hitboxClone = spawnAttack(new Vector3(0, 1, 0), attackTimer);
+                                        hb = hitboxClone.GetComponent<Hitbox>();
+                                        hb.overHead = true;
+                                        hb.duration = attackTimer / 2;
+                                        hb.turnSpeed = 10;
                                         usingAttack = true;
                                         comboCounter = 0;
-                                        comboTimer = 0;
-                                        break;
-                                }
-                                break;
-                            case 6:
-                                break;
+                                        comboTimer = 15;
+                                        downAttack = true;
+                                        downTimer = 15;
+                                    }
+                                    break;
+                                case 4:
+                                    {
+                                        attackTimer = 20;
+                                        hitboxClone = spawnAttack(new Vector3(-1, -0.3f, 0), attackTimer);
+                                        hb = hitboxClone.GetComponent<Hitbox>();
+                                        hb.duration = attackTimer / 2;
+                                        hb.movement = (0.7f / hb.duration) * Vector3.up;
+                                        hb.knockback = new Vector3(-100, 500, 0);
+                                        rb.AddForce(new Vector3(-200, 600, 0));
+                                        usingAttack = true;
+                                        comboCounter = 0;
+                                        comboTimer = 15;
+                                    }
+                                    break;
+                                case 5:
+                                    {
+                                        switch (comboCounter)
+                                        {
+                                            case 0:
+                                                attackTimer = 10;
+                                                spawnAttack(new Vector3(-1, 0, 0), attackTimer);
+                                                rb.AddForce(new Vector3(-200, 0, 0));
+                                                usingAttack = true;
+                                                comboCounter += 1;
+                                                comboTimer = 25;
+                                                break;
+                                            case 1:
+                                                attackTimer = 10;
+                                                spawnAttack(new Vector3(-1, 0, 0), attackTimer);
+                                                rb.AddForce(new Vector3(-200, 0, 0));
+                                                usingAttack = true;
+                                                comboCounter = 2;
+                                                comboTimer = 25;
+                                                break;
+                                            case 2:
+                                                attackTimer = 40;
+                                                spawnAttack(new Vector3(-1, 0, 0), attackTimer, true);
+                                                usingAttack = true;
+                                                comboCounter = 3;
+                                                comboTimer = 25;
+                                                break;
+                                            case 3:
+                                                attackTimer = 20;
+                                                spawnAttack(new Vector3(-1, 0, 0), attackTimer);
+                                                rb.AddForce(new Vector3(-400, 0, 0));
+                                                usingAttack = true;
+                                                comboCounter = 0;
+                                                comboTimer = 0;
+                                                break;
+                                        }
+                                    }
+                                    break;
+                                case 6:
+                                    {
+                                        attackTimer = 10;
+                                        hitboxClone = spawnAttack(new Vector3(0, 1, 0), attackTimer);
+                                        hb = hitboxClone.GetComponent<Hitbox>();
+                                        hb.overHead = true;
+                                        hb.duration = attackTimer / 2;
+                                        hb.turnSpeed = -10;
+                                        usingAttack = true;
+                                        comboCounter = 0;
+                                        comboTimer = 15;
+                                        downAttack = true;
+                                        downTimer = 15;
+                                    }
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            switch (attackDirection)
+                            {
+                                case 1:
+                                    break;
+                                case 2:
+                                    break;
+                                case 3:
+                                    break;
+                                case 4:
+                                    break;
+                                case 5:
+                                    break;
+                                case 6:
+                                    break;
+                            }
                         }
                     }
                 }

@@ -23,7 +23,6 @@ GameObject:
   - component: {fileID: 23255533622563380}
   - component: {fileID: 135279757603467464}
   - component: {fileID: 114853382826549198}
-  - component: {fileID: 135217238792500660}
   m_Layer: 0
   m_Name: AttackHitbox
   m_TagString: Untagged
@@ -99,18 +98,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackTimer: 0
   isScytheSpin: 0
---- !u!135 &135217238792500660
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1017879631816838}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
+  movement: {x: 0, y: 0, z: 0}
+  duration: 0
+  overHead: 0
+  turnSpeed: 0
+  knockback: {x: 0, y: 0, z: 0}
 --- !u!135 &135279757603467464
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -118,7 +110,7 @@ SphereCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1017879631816838}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.25
