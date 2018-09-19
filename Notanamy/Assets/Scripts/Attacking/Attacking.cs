@@ -89,6 +89,7 @@ public class Attacking : MonoBehaviour {
             if (attackTimer <= 0)
             {
                 usingAttack = false;
+                player.allowMovement = true;
             }
 
             if ((comboTimer > 0) && !(usingAttack))
@@ -98,6 +99,11 @@ public class Attacking : MonoBehaviour {
             if (comboTimer <= 0)
             {
                 comboCounter = 0;
+            }
+
+            if (usingAttack)
+            {
+                player.allowMovement = false;
             }
             
 

@@ -170,7 +170,7 @@ public class Player : MonoBehaviour {
             }
 
             //If no or both directions are pressed slow down using drag
-            if (!((Input.GetKey(KeyCode.D)) || (Input.GetKey(KeyCode.A))) || ((Input.GetKey(KeyCode.D)) && (Input.GetKey(KeyCode.A))))
+            if (!((Input.GetKey(KeyCode.D)) || (Input.GetKey(KeyCode.A))) || ((Input.GetKey(KeyCode.D)) && (Input.GetKey(KeyCode.A))) || allowMovement == false)
             {
                 //Minimal speed to avoid micromovements instead of stopping
                 if (rb.velocity.x < minSpeed && rb.velocity.x > -minSpeed)
