@@ -60,6 +60,7 @@ public class Player : MonoBehaviour {
     private Collider col;
     private float distToGround;
     private float distToWall;
+    RaycastHit ray;
 
     //Attack
     float anglePlayerMouse;
@@ -80,11 +81,11 @@ public class Player : MonoBehaviour {
 
     //Checks if the player in on the ground using 5 raycast to minimize the area not checked and returns a boolian
     public bool IsGrounded() {
-        bool OnGround1 = Physics.Raycast(transform.position, -Vector3.up, distToGround + 0.1f);
-        bool OnGround2 = Physics.Raycast(new Vector3(transform.position.x - transform.localScale.x / 2 + 0.01f, transform.position.y, transform.position.z), -Vector3.up, distToGround + 0.1f);
-        bool OnGround3 = Physics.Raycast(new Vector3(transform.position.x + transform.localScale.x / 2 - 0.01f, transform.position.y, transform.position.z), -Vector3.up, distToGround + 0.1f);
-        bool OnGround4 = Physics.Raycast(new Vector3(transform.position.x - transform.localScale.x / 4, transform.position.y, transform.position.z), -Vector3.up, distToGround + 0.1f);
-        bool OnGround5 = Physics.Raycast(new Vector3(transform.position.x + transform.localScale.x / 4, transform.position.y, transform.position.z), -Vector3.up, distToGround + 0.1f);
+        bool OnGround1 = (Physics.Raycast(transform.position, -Vector3.up, out ray, distToWall + 0.1f) && ray.transform.tag == "Terrain");
+        bool OnGround2 = (Physics.Raycast(new Vector3(transform.position.x - transform.localScale.x / 2 + 0.01f, transform.position.y, transform.position.z), -Vector3.up, out ray, distToWall + 0.1f) && ray.transform.tag == "Terrain");
+        bool OnGround3 = (Physics.Raycast(new Vector3(transform.position.x + transform.localScale.x / 2 - 0.01f, transform.position.y, transform.position.z), -Vector3.up, out ray, distToWall + 0.1f) && ray.transform.tag == "Terrain");
+        bool OnGround4 = (Physics.Raycast(new Vector3(transform.position.x - transform.localScale.x / 4, transform.position.y, transform.position.z), -Vector3.up, out ray, distToWall + 0.1f) && ray.transform.tag == "Terrain");
+        bool OnGround5 = (Physics.Raycast(new Vector3(transform.position.x + transform.localScale.x / 4, transform.position.y, transform.position.z), -Vector3.up, out ray, distToWall + 0.1f) && ray.transform.tag == "Terrain");
         bool OnGround = (OnGround1 || OnGround2 || OnGround3 || OnGround4 || OnGround5);
         return OnGround;
     }
@@ -92,7 +93,7 @@ public class Player : MonoBehaviour {
     //Checks if the player is on the left wall
     public bool OnLeftWall()
     {
-        bool OnWall1 = Physics.Raycast(transform.position, Vector3.left, distToWall + 0.1f);
+        bool OnWall1 = (Physics.Raycast(transform.position, Vector3.left, out ray,  distToWall + 0.1f) && ray.transform.tag == "Terrain");
         bool OnWall = OnWall1;
         return OnWall;
     }
@@ -100,7 +101,7 @@ public class Player : MonoBehaviour {
     //Checks if the player is on the right wall
     public bool OnRightWall()
     {
-        bool OnWall1 = Physics.Raycast(transform.position, Vector3.right, distToWall + 0.1f);
+        bool OnWall1 = (Physics.Raycast(transform.position, Vector3.right, out ray, distToWall + 0.1f) && ray.transform.tag == "Terrain");
         bool OnWall = OnWall1;
         return OnWall;
     }
