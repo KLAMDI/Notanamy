@@ -332,66 +332,68 @@ public class Player : MonoBehaviour {
                     dashSpeed = Mathf.Abs(dashSpeed);
                 }
 
-                //Throw a grappling hook using the R button
-                if (GrHAbl)
-                {
-
-                    if (Input.GetKeyDown(KeyCode.R))
-                    {
-                        grapplingHookSpawn();
-                    }
-
-                    //If the grappling hook exists and is frozen, pull the player toward it
-                    if (rigidGrHook)
-                    {
-
-                        //Pulls the player in if they're past the maximum grapple length
-                        float grappleplayerDistance = Vector3.Distance(rb.transform.position, rigidGrHook.transform.position);
-
-                        if (rigidGrHook.constraints == RigidbodyConstraints.FreezePosition)
-                        {
-                            float grappleAngle = Mathf.Atan((rigidGrHook.transform.position.x - rb.transform.position.x) / (rigidGrHook.transform.position.y - rb.transform.position.y));
-   
-                            if (grappleplayerDistance > grappleLength)
-                            {
-                                rb.transform.position = rigidGrHook.transform.position + (rb.transform.position - rigidGrHook.transform.position) * grappleLength / grappleplayerDistance;
-                                Vector3 grapDir = (rigidGrHook.transform.position - rb.transform.position).normalized;
-
-                                Vector3 grapAngleDir;
-
-                                //Horizontal force due to gravity
-                                if (rigidGrHook.transform.position.x - rb.transform.position.x < 0)
-                                {
-                                    grapAngleDir = new Vector3(grapDir.y, -grapDir.x, 0);
-                                }
-                                else
-                                {
-                                     grapAngleDir = new Vector3(-grapDir.y, grapDir.x, 0);
-                                }
-
-                                //Tension force
-                                float grapTension1 = Mathf.Pow(Vector3.Dot(rb.velocity, grapAngleDir), 2) / grappleLength;
-                                float grapTension2 = gravity * Mathf.Cos(grappleAngle);
-                                var downwardAcc = rb.velocity.y - lastYVel;
-                                rb.AddForce((grapTension1 + grapTension2 + downwardAcc) * grapDir);
-                                lastYVel = rb.velocity.y;
-
-                                rb.AddForce(-gravity * Mathf.Sin(grappleAngle) * grapAngleDir);
-                                Debug.Log(rb.velocity.y);
-                                Debug.Log(grapDir);
-                                
-                            }
-                        }
-
-                        else if (grappleplayerDistance > grappleLength)
-                        {
-                            rigidGrHook.transform.position = rb.transform.position + (rigidGrHook.transform.position - rb.transform.position) * grappleLength / grappleplayerDistance;
-                        }
-
-                    }
-
-                }
             }
+        }
+    }
+
+    void FixedUpdate()
+    {
+        //Throw a grappling hook using the R button
+        if (GrHAbl)
+        {
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                grapplingHookSpawn();
+            }
+
+            //If the grappling hook exists and is frozen, pull the player toward it
+            if (rigidGrHook)
+            {
+
+                //Pulls the player in if they're past the maximum grapple length
+                float grappleplayerDistance = Vector3.Distance(rb.transform.position, rigidGrHook.transform.position);
+
+                if (rigidGrHook.constraints == RigidbodyConstraints.FreezePosition)
+                {
+                    float grappleAngle = Mathf.Abs(Mathf.Atan((rigidGrHook.transform.position.x - rb.transform.position.x) / (rigidGrHook.transform.position.y - rb.transform.position.y)));
+
+                    if (grappleplayerDistance > grappleLength)
+                    {
+                        rb.transform.position = rigidGrHook.transform.position + (rb.transform.position - rigidGrHook.transform.position) * grappleLength / grappleplayerDistance;
+                        Vector3 grapDir = (rigidGrHook.transform.position - rb.transform.position).normalized;
+
+                        Vector3 grapAngleDir;
+
+                        //Horizontal force due to gravity
+                        if (rigidGrHook.transform.position.x - rb.transform.position.x < 0)
+                        {
+                            grapAngleDir = new Vector3(grapDir.y, -grapDir.x, 0);
+                        }
+                        else
+                        {
+                            grapAngleDir = new Vector3(-grapDir.y, grapDir.x, 0);
+                        }
+
+                        //Tension force
+                        float grapTension1 = Mathf.Pow(Vector3.Dot(rb.velocity, grapAngleDir), 2) / grappleLength;
+                        float grapTension2 = 9.81f * Mathf.Cos(grappleAngle);
+                        rb.AddForce((grapTension1 + grapTension2) * grapDir);
+
+                        rb.AddForce(-9.81f * Mathf.Sin(grappleAngle) * grapAngleDir);
+                        Debug.Log(rb.velocity.y);
+                        Debug.Log(grapDir);
+
+                    }
+                }
+
+                else if (grappleplayerDistance > grappleLength)
+                {
+                    rigidGrHook.transform.position = rb.transform.position + (rigidGrHook.transform.position - rb.transform.position) * grappleLength / grappleplayerDistance;
+                }
+
+            }
+
         }
     }
 
