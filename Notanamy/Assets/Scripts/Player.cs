@@ -378,6 +378,7 @@ public class Player : MonoBehaviour {
                         //Tension force
                         float grapTension1 = Mathf.Pow(Vector3.Dot(rb.velocity, grapAngleDir), 2) / grappleLength;
                         float grapTension2 = 9.81f * Mathf.Cos(grappleAngle);
+
                         rb.AddForce((grapTension1 + grapTension2) * grapDir);
 
                         rb.AddForce(-9.81f * Mathf.Sin(grappleAngle) * grapAngleDir);
