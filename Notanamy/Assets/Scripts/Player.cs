@@ -57,6 +57,8 @@ public class Player : MonoBehaviour {
     Rigidbody rigidGrHook;
     Vector3 lastVel;
     bool currentlyGrappling;
+    float deltaTime;
+    float lastTime;
 
     //collision ditection
     private Collider col;
@@ -277,6 +279,8 @@ public class Player : MonoBehaviour {
 
     void FixedUpdate()
     {
+        Debug.Log("Test");
+
         //Throw a grappling hook using the R button
         if (GrHAbl)
         {
@@ -361,16 +365,12 @@ public class Player : MonoBehaviour {
 
                     float grapAngle = Mathf.Abs(Mathf.Atan((rigidGrHook.transform.position.x - rb.transform.position.x) / (rigidGrHook.transform.position.y - rb.transform.position.y)));
 
-                    if (grappleplayerDistance > grappleLength)
+                    if (grappleplayerDistance >= grappleLength)
                     {
+                        deltaTime = Time.time - lastTime;
 
                         //rb.transform.position = rigidGrHook.transform.position + (rb.transform.position - rigidGrHook.transform.position) * grappleLength / grappleplayerDistance;
                         Vector3 grapDir = (rigidGrHook.transform.position - rb.transform.position).normalized;
-
-                        //Slow down the player, simulating the finite rope
-                        float currentVelGrap = Vector3.Dot(rb.velocity, grapDir);
-                        rb.AddForce(-(currentVelGrap * grapDir) / Time.deltaTime);
-
                         Vector3 grapAngleDir;
 
                         //Horizontal force due to gravity
@@ -383,16 +383,25 @@ public class Player : MonoBehaviour {
                             grapAngleDir = new Vector3(grapDir.y, -grapDir.x, 0);
                         }
 
-                       
+                        rb.AddForce(gravity * Mathf.Cos(grapAngle) * grapAngleDir);
+
                         //Tension force
-                        float grapTension1 = Mathf.Pow(Vector3.Dot(rb.velocity, grapAngleDir), 2) / grappleLength;
+                        float grapTension1 = rb.velocity.sqrMagnitude / grappleplayerDistance;
                         float grapTension2 = gravity * Mathf.Cos(grapAngle);
 
                         rb.AddForce((grapTension1 + grapTension2) * grapDir);
 
-                        rb.AddForce(gravity * Mathf.Cos(grapAngle) * grapAngleDir);
-                        
+                        //Slow down the player, simulating the finite rope
+                        float currentVelGrap = Vector3.Dot(rb.velocity, grapDir);
+                        rb.AddForce(-(currentVelGrap * grapDir) / deltaTime);
 
+                        //Debug.Log(gravity * Mathf.Cos(grapAngle) * grapAngleDir);
+                        //Debug.Log((rb.velocity.sqrMagnitude / grappleplayerDistance) * grapDir);
+                        //Debug.Log((gravity * Mathf.Cos(grapAngle)) * grapDir);
+                        Debug.Log(-(currentVelGrap * grapDir) / deltaTime);
+                        Debug.Log(deltaTime);
+
+                        lastTime = Time.time;
                     }
                 }
 
