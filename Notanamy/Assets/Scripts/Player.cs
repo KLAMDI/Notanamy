@@ -56,6 +56,7 @@ public class Player : MonoBehaviour {
     public Rigidbody grapplingHook;
     Rigidbody rigidGrHook;
     Vector3 lastVel;
+    bool currentlyGrappling;
 
     //collision ditection
     private Collider col;
@@ -328,7 +329,7 @@ public class Player : MonoBehaviour {
                     }
 
                     //Apply drag when on ground or when airDrag is turned on
-                    if (IsGrounded() || airDragTest)
+                    if ((IsGrounded() || airDragTest) && !(currentlyGrappling))
                     {
                         if (rb.velocity.x >= minSpeed)
                         {
@@ -356,6 +357,8 @@ public class Player : MonoBehaviour {
 
                 if (rigidGrHook.constraints == RigidbodyConstraints.FreezePosition)
                 {
+                    currentlyGrappling = true;
+
                     float grapAngle = Mathf.Abs(Mathf.Atan((rigidGrHook.transform.position.x - rb.transform.position.x) / (rigidGrHook.transform.position.y - rb.transform.position.y)));
 
                     if (grappleplayerDistance > grappleLength)
@@ -411,6 +414,7 @@ public class Player : MonoBehaviour {
         if (GameObject.Find("Grappling Hook(Clone)") != null)
         {
             Destroy(GameObject.Find("Grappling Hook(Clone)"));
+            currentlyGrappling = false;
             return;
         }
 
