@@ -35,3 +35,9 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+Notanamy/Assets/ForceTest.cs
+Notanamy/Assets/ForceTest.cs.meta
+Notanamy/Assets/Scenes/Jan Test scene.unity
+Notanamy/Assets/Scripts/SwingingV2.cs
+Notanamy/Assets/Scripts/SwingingV2.cs.meta
+Notanamy/ProjectSettings/TagManager.asset
