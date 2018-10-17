@@ -14,7 +14,10 @@ public class Hitbox : MonoBehaviour {
     public Vector3 knockback;
     GameObject player;
 
-    List<Collider> enemiesHit;
+
+    bool repeatHit = false;
+    bool hitSomething = false;
+    public List<Collider> enemiesHit;
 
 
     public Vector3 AngleToPosition(float angle, float Hy, float posZ = 0)
@@ -68,7 +71,25 @@ public class Hitbox : MonoBehaviour {
     {
         if (other.transform.tag == "Enemy")
         {
-            other.GetComponent<Rigidbody>().AddForce(knockback);
+            enemiesHit.Add(other);
+
+            repeatHit = false;
+            if (hitSomething)
+            {
+                for (int i = 0; i < enemiesHit.Count; i++)
+                {
+                    if (other = enemiesHit[i])
+                    {
+                        repeatHit = true;
+                    }
+                }
+            }
+            if (!repeatHit)
+            {
+                Debug.Log("Hit");
+                hitSomething = true;
+                other.GetComponent<Rigidbody>().AddForce(knockback);
+            }
         }
     }
 }
