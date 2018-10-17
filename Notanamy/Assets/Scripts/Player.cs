@@ -281,6 +281,15 @@ public class Player : MonoBehaviour {
                     dashSpeed = Mathf.Abs(dashSpeed);
                 }
 
+                //Grappling Hook spawn
+                if (GrHAbl)
+                {
+                    if (Input.GetKeyDown(KeyCode.R))
+                    {
+                        grapplingHookSpawn();
+                    }
+                }
+
             }
         }
     }
@@ -353,11 +362,6 @@ public class Player : MonoBehaviour {
         //Throw a grappling hook using the R button
         if (GrHAbl)
         {
-
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                grapplingHookSpawn();
-            }
 
             //If the grappling hook exists and is frozen, pull the player toward it
             if (rigidGrHook)
