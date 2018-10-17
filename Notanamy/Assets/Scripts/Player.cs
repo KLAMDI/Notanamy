@@ -33,7 +33,8 @@ public class Player : MonoBehaviour {
     public float wallGravity;
     public float fallingMultiplier;
     public float lowJumpMultiplier;
-    float normalGravity;
+    float fallingMultInit;
+    float lowJumpMultInit;
 
     //Dash
     public bool dashAbl1;
@@ -72,15 +73,22 @@ public class Player : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
+
         //Get the nessesarie components
         rb = gameObject.GetComponent<Rigidbody>();
         col = gameObject.GetComponent<Collider>();
         // get the distance to ground
+
         distToGround = col.bounds.extents.y;
         distToWall = col.bounds.extents.x;
-        //Dashing
+      
+        //Dashing initial values
         dashTimerInit = dashTimer;
         dashLength = maxDashLength;
+
+        //Grappling initial values
+        fallingMultInit = fallingMultiplier;
+        lowJumpMultInit = lowJumpMultiplier;
     }
 
     //Checks if the player in on the ground using 5 raycast to minimize the area not checked and returns a boolian
@@ -364,6 +372,10 @@ public class Player : MonoBehaviour {
 
                     float grapAngle = Mathf.Abs(Mathf.Atan((rigidGrHook.transform.position.x - rb.transform.position.x) / (rigidGrHook.transform.position.y - rb.transform.position.y)));
 
+                    //Setting all gravity multipliers to 1 for correct physics simulation
+                    fallingMultiplier = 1;
+                    lowJumpMultiplier = 1;
+
                     if (grappleplayerDistance >= grappleLength)
                     {
 
@@ -414,10 +426,12 @@ public class Player : MonoBehaviour {
 
         }
 
-        //Makes sure currentlygrappling is set to false if there is no grappling hook
+        //Makes sure to turn drag and the gravity multipliers back on if there's no grappling hook 
         if (GameObject.Find("Grappling Hook(Clone)") == null)
         {
             currentlyGrappling = false;
+            fallingMultiplier = fallingMultInit;
+            lowJumpMultiplier = lowJumpMultInit;
         }
 
     }
