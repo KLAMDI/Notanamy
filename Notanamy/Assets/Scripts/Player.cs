@@ -33,7 +33,8 @@ public class Player : MonoBehaviour {
     public float wallGravity;
     public float fallingMultiplier;
     public float lowJumpMultiplier;
-    float normalGravity;
+    float fallingMultInit;
+    float lowJumpMultInit;
 
     //Dash
     public bool dashAbl1;
@@ -55,7 +56,10 @@ public class Player : MonoBehaviour {
     public float grapplePullStrength;
     public Rigidbody grapplingHook;
     Rigidbody rigidGrHook;
-    float lastYVel;
+    Vector3 lastVel;
+    bool currentlyGrappling;
+    float deltaGrapTime;
+    float lastGrapTime;
 
     //collision ditection
     private Collider col;
@@ -69,15 +73,22 @@ public class Player : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
+
         //Get the nessesarie components
         rb = gameObject.GetComponent<Rigidbody>();
         col = gameObject.GetComponent<Collider>();
         // get the distance to ground
+
         distToGround = col.bounds.extents.y;
         distToWall = col.bounds.extents.x;
-        //Dashing
+      
+        //Dashing initial values
         dashTimerInit = dashTimer;
         dashLength = maxDashLength;
+
+        //Grappling initial values
+        fallingMultInit = fallingMultiplier;
+        lowJumpMultInit = lowJumpMultiplier;
     }
 
     //Checks if the player in on the ground using 5 raycast to minimize the area not checked and returns a boolian
@@ -132,68 +143,6 @@ public class Player : MonoBehaviour {
         //Mouse Position
         mouseP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseP = new Vector3(mouseP.x, mouseP.y, 0);
-
-        //physics
-        {
-            //Simulate gravity for player only 
-            //Gravity on a wall is lower while moving down
-            if ((OnLeftWall() || OnRightWall()) && (rb.velocity.y < 0))
-            {
-                rb.AddForce(0, -wallGravity, 0);
-            }
-            else
-            {
-
-                //Change gravity strength to make jumps less floaty
-                if (rb.velocity.y < 0)
-                {
-                    rb.AddForce(0, -gravity * fallingMultiplier, 0);
-                }
-                //Holding up makes you jump higher
-                else if (Input.GetKey(KeyCode.W))
-                {
-                    rb.AddForce(0, -gravity, 0);
-                }
-                //Higher gravity when not holding up
-                else
-                {
-                    rb.AddForce(0, -gravity * lowJumpMultiplier, 0);
-                }
-            }
-
-            //Limmit the speed a player can move at
-            if (rb.velocity.x > maxSpeed)
-            {
-                rb.velocity = new Vector3(maxSpeed, rb.velocity.y, 0);
-            }
-            if (rb.velocity.x < -maxSpeed)
-            {
-                rb.velocity = new Vector3(-maxSpeed, rb.velocity.y, 0);
-            }
-
-            //If no or both directions are pressed slow down using drag
-            if (!((Input.GetKey(KeyCode.D)) || (Input.GetKey(KeyCode.A))) || ((Input.GetKey(KeyCode.D)) && (Input.GetKey(KeyCode.A))) || allowMovement == false)
-            {
-                //Minimal speed to avoid micromovements instead of stopping
-                if (rb.velocity.x < minSpeed && rb.velocity.x > -minSpeed)
-                {
-                    rb.velocity = new Vector3(0, rb.velocity.y, 0);
-                }
-
-                //Apply drag when on ground or when airDrag is turned on
-                if (IsGrounded() || airDragTest)
-                {
-                    if (rb.velocity.x >= minSpeed)
-                    {
-                        rb.AddForce(-drag, 0, 0);
-                    }
-                    if (rb.velocity.x <= -minSpeed)
-                    {
-                        rb.AddForce(drag, 0, 0);
-                    }
-                }
-            }
-        }
 
         //Reset doublejumps when on the ground
         if (IsGrounded())
@@ -332,62 +281,147 @@ public class Player : MonoBehaviour {
                     dashSpeed = Mathf.Abs(dashSpeed);
                 }
 
+                //Grappling Hook spawn
+                if (GrHAbl)
+                {
+                    if (Input.GetKeyDown(KeyCode.R))
+                    {
+                        grapplingHookSpawn();
+                    }
+                }
+
             }
         }
     }
 
     void FixedUpdate()
     {
+
+        //physics
+        {
+            //Simulate gravity for player only 
+            //Gravity on a wall is lower while moving down
+            if ((OnLeftWall() || OnRightWall()) && (rb.velocity.y < 0))
+            {
+                rb.AddForce(0, -wallGravity, 0);
+            }
+            else
+            {
+
+                //Change gravity strength to make jumps less floaty
+                if (rb.velocity.y < 0)
+                {
+                    rb.AddForce(0, -gravity * fallingMultiplier, 0);
+                }
+                //Holding up makes you jump higher
+                else if (Input.GetKey(KeyCode.W))
+                {
+                    rb.AddForce(0, -gravity, 0);
+                }
+                //Higher gravity when not holding up
+                else
+                {
+                    rb.AddForce(0, -gravity * lowJumpMultiplier, 0);
+                }
+            }
+
+            //Limmit the speed a player can move at
+            if (rb.velocity.x > maxSpeed)
+            {
+                rb.velocity = new Vector3(maxSpeed, rb.velocity.y, 0);
+            }
+            if (rb.velocity.x < -maxSpeed)
+            {
+                rb.velocity = new Vector3(-maxSpeed, rb.velocity.y, 0);
+            }
+
+            //If no or both directions are pressed slow down using drag
+            if (!((Input.GetKey(KeyCode.D)) || (Input.GetKey(KeyCode.A))) || ((Input.GetKey(KeyCode.D)) && (Input.GetKey(KeyCode.A))) || allowMovement == false)
+            {
+                //Minimal speed to avoid micromovements instead of stopping
+                if (rb.velocity.x < minSpeed && rb.velocity.x > -minSpeed)
+                {
+                    rb.velocity = new Vector3(0, rb.velocity.y, 0);
+                }
+
+                //Apply drag when on ground or when airDrag is turned on
+                if ((IsGrounded() || airDragTest) && !(currentlyGrappling))
+                {
+                    if (rb.velocity.x >= minSpeed)
+                    {
+                        rb.AddForce(-drag, 0, 0);
+                    }
+                    if (rb.velocity.x <= -minSpeed)
+                    {
+                        rb.AddForce(drag, 0, 0);
+                    }
+                }
+            }
+        }
+
         //Throw a grappling hook using the R button
         if (GrHAbl)
         {
-
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                grapplingHookSpawn();
-            }
 
             //If the grappling hook exists and is frozen, pull the player toward it
             if (rigidGrHook)
             {
 
-                //Pulls the player in if they're past the maximum grapple length
                 float grappleplayerDistance = Vector3.Distance(rb.transform.position, rigidGrHook.transform.position);
 
                 if (rigidGrHook.constraints == RigidbodyConstraints.FreezePosition)
                 {
-                    float grappleAngle = Mathf.Abs(Mathf.Atan((rigidGrHook.transform.position.x - rb.transform.position.x) / (rigidGrHook.transform.position.y - rb.transform.position.y)));
+                    currentlyGrappling = true;
 
-                    if (grappleplayerDistance > grappleLength)
+                    float grapAngle = Mathf.Abs(Mathf.Atan((rigidGrHook.transform.position.x - rb.transform.position.x) / (rigidGrHook.transform.position.y - rb.transform.position.y)));
+
+                    //Setting all gravity multipliers to 1 for correct physics simulation
+                    fallingMultiplier = 1;
+                    lowJumpMultiplier = 1;
+
+                    //Simulating forces that occur when the rope reaches its maximum length
+                    if (grappleplayerDistance >= grappleLength)
                     {
-                        rb.transform.position = rigidGrHook.transform.position + (rb.transform.position - rigidGrHook.transform.position) * grappleLength / grappleplayerDistance;
-                        Vector3 grapDir = (rigidGrHook.transform.position - rb.transform.position).normalized;
 
+                        //rb.transform.position = rigidGrHook.transform.position + (rb.transform.position - rigidGrHook.transform.position) * grappleLength / grappleplayerDistance;
+                        Vector3 grapDir = (rigidGrHook.transform.position - rb.transform.position).normalized;
                         Vector3 grapAngleDir;
 
                         //Horizontal force due to gravity
                         if (rigidGrHook.transform.position.x - rb.transform.position.x < 0)
                         {
-                            grapAngleDir = new Vector3(grapDir.y, -grapDir.x, 0);
+                            grapAngleDir = new Vector3(-grapDir.y, grapDir.x, 0);
                         }
                         else
                         {
-                            grapAngleDir = new Vector3(-grapDir.y, grapDir.x, 0);
+                            grapAngleDir = new Vector3(grapDir.y, -grapDir.x, 0);
                         }
 
-                        //Tension force
-                        float grapTension1 = Mathf.Pow(Vector3.Dot(rb.velocity, grapAngleDir), 2) / grappleLength;
-                        float grapTension2 = 9.81f * Mathf.Cos(grappleAngle);
+                        deltaGrapTime = Time.time - lastGrapTime;
+
+                        rb.AddForce(gravity * Mathf.Cos(grapAngle) * grapAngleDir);
+
+                        //Tension force due to rope length and gravity
+                        float grapTension1 = rb.velocity.sqrMagnitude / grappleplayerDistance;
+                        float grapTension2 = gravity * Mathf.Cos(grapAngle);
 
                         rb.AddForce((grapTension1 + grapTension2) * grapDir);
 
-                        rb.AddForce(-9.81f * Mathf.Sin(grappleAngle) * grapAngleDir);
-                        Debug.Log(rb.velocity.y);
-                        Debug.Log(grapDir);
+                        //Slow down the player, simulating the finite rope
+                        float currentVelGrap = Vector3.Dot(rb.velocity, grapDir);
+                        rb.AddForce(-(currentVelGrap * grapDir) / deltaGrapTime);
 
+                        //Debug.Log(gravity * Mathf.Cos(grapAngle) * grapAngleDir);
+                        //Debug.Log((rb.velocity.sqrMagnitude / grappleplayerDistance) * grapDir);
+                        //Debug.Log((gravity * Mathf.Cos(grapAngle)) * grapDir);
+                        Debug.Log(grapAngleDir);
+                        Debug.Log(deltaGrapTime);
+
+                        lastGrapTime = Time.time;
                     }
                 }
 
+                //Pulls the grappling hook towards the player to simulate rope length
                 else if (grappleplayerDistance > grappleLength)
                 {
                     rigidGrHook.transform.position = rb.transform.position + (rigidGrHook.transform.position - rb.transform.position) * grappleLength / grappleplayerDistance;
@@ -396,6 +430,15 @@ public class Player : MonoBehaviour {
             }
 
         }
+
+        //Makes sure to turn drag and the gravity multipliers back on if there's no grappling hook 
+        if (GameObject.Find("Grappling Hook(Clone)") == null)
+        {
+            currentlyGrappling = false;
+            fallingMultiplier = fallingMultInit;
+            lowJumpMultiplier = lowJumpMultInit;
+        }
+
     }
 
     //Grappling hook ability
@@ -410,7 +453,7 @@ public class Player : MonoBehaviour {
         }
 
         //The hook cannot be spawned past given maximum range, calculating where that is
-        float grappleAngle = Mathf.Atan((rb.transform.position.y - mouseP.y) / (rb.transform.position.x - mouseP.x));
+        float grapAngle = Mathf.Atan((rb.transform.position.y - mouseP.y) / (rb.transform.position.x - mouseP.x));
         Vector3 grapplePos = new Vector3(rb.transform.position.x, rb.transform.position.y, 0);
 
         rigidGrHook = Instantiate(grapplingHook, grapplePos, rb.rotation) as Rigidbody;
@@ -418,10 +461,10 @@ public class Player : MonoBehaviour {
         //Adding Pi to the angle in the negative x quadrant to make sure the hook always moves away from the player
         if (mouseP.x - rb.transform.position.x < 0)
         {
-            grappleAngle += Mathf.PI;
+            grapAngle += Mathf.PI;
         }
 
-        rigidGrHook.AddForce(grThrowSpeed * Mathf.Cos(grappleAngle), grThrowSpeed * Mathf.Sin(grappleAngle), 0);
+        rigidGrHook.AddForce(grThrowSpeed * Mathf.Cos(grapAngle), grThrowSpeed * Mathf.Sin(grapAngle), 0);
 
     }
 
