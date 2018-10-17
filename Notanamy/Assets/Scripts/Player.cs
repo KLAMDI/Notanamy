@@ -58,8 +58,8 @@ public class Player : MonoBehaviour {
     Rigidbody rigidGrHook;
     Vector3 lastVel;
     bool currentlyGrappling;
-    float deltaTime;
-    float lastTime;
+    float deltaGrapTime;
+    float lastGrapTime;
 
     //collision ditection
     private Collider col;
@@ -363,7 +363,6 @@ public class Player : MonoBehaviour {
             if (rigidGrHook)
             {
 
-                //Pulls the player in if they're past the maximum grapple length
                 float grappleplayerDistance = Vector3.Distance(rb.transform.position, rigidGrHook.transform.position);
 
                 if (rigidGrHook.constraints == RigidbodyConstraints.FreezePosition)
@@ -376,6 +375,7 @@ public class Player : MonoBehaviour {
                     fallingMultiplier = 1;
                     lowJumpMultiplier = 1;
 
+                    //Simulating forces that occur when the rope reaches its maximum length
                     if (grappleplayerDistance >= grappleLength)
                     {
 
@@ -393,7 +393,7 @@ public class Player : MonoBehaviour {
                             grapAngleDir = new Vector3(grapDir.y, -grapDir.x, 0);
                         }
 
-                        deltaTime = Time.time - lastTime;
+                        deltaGrapTime = Time.time - lastGrapTime;
 
                         rb.AddForce(gravity * Mathf.Cos(grapAngle) * grapAngleDir);
 
@@ -405,18 +405,19 @@ public class Player : MonoBehaviour {
 
                         //Slow down the player, simulating the finite rope
                         float currentVelGrap = Vector3.Dot(rb.velocity, grapDir);
-                        rb.AddForce(-(currentVelGrap * grapDir) / deltaTime);
+                        rb.AddForce(-(currentVelGrap * grapDir) / deltaGrapTime);
 
                         //Debug.Log(gravity * Mathf.Cos(grapAngle) * grapAngleDir);
                         //Debug.Log((rb.velocity.sqrMagnitude / grappleplayerDistance) * grapDir);
                         //Debug.Log((gravity * Mathf.Cos(grapAngle)) * grapDir);
                         Debug.Log(grapAngleDir);
-                        Debug.Log(deltaTime);
+                        Debug.Log(deltaGrapTime);
 
-                        lastTime = Time.time;
+                        lastGrapTime = Time.time;
                     }
                 }
 
+                //Pulls the grappling hook towards the player to simulate rope length
                 else if (grappleplayerDistance > grappleLength)
                 {
                     rigidGrHook.transform.position = rb.transform.position + (rigidGrHook.transform.position - rb.transform.position) * grappleLength / grappleplayerDistance;
