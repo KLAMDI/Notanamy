@@ -279,7 +279,6 @@ public class Player : MonoBehaviour {
 
     void FixedUpdate()
     {
-        Debug.Log("Test");
 
         //Throw a grappling hook using the R button
         if (GrHAbl)
@@ -367,7 +366,6 @@ public class Player : MonoBehaviour {
 
                     if (grappleplayerDistance >= grappleLength)
                     {
-                        deltaTime = Time.time - lastTime;
 
                         //rb.transform.position = rigidGrHook.transform.position + (rb.transform.position - rigidGrHook.transform.position) * grappleLength / grappleplayerDistance;
                         Vector3 grapDir = (rigidGrHook.transform.position - rb.transform.position).normalized;
@@ -383,9 +381,11 @@ public class Player : MonoBehaviour {
                             grapAngleDir = new Vector3(grapDir.y, -grapDir.x, 0);
                         }
 
+                        deltaTime = Time.time - lastTime;
+
                         rb.AddForce(gravity * Mathf.Cos(grapAngle) * grapAngleDir);
 
-                        //Tension force
+                        //Tension force due to rope length and gravity
                         float grapTension1 = rb.velocity.sqrMagnitude / grappleplayerDistance;
                         float grapTension2 = gravity * Mathf.Cos(grapAngle);
 
@@ -398,7 +398,7 @@ public class Player : MonoBehaviour {
                         //Debug.Log(gravity * Mathf.Cos(grapAngle) * grapAngleDir);
                         //Debug.Log((rb.velocity.sqrMagnitude / grappleplayerDistance) * grapDir);
                         //Debug.Log((gravity * Mathf.Cos(grapAngle)) * grapDir);
-                        Debug.Log(-(currentVelGrap * grapDir) / deltaTime);
+                        Debug.Log(grapAngleDir);
                         Debug.Log(deltaTime);
 
                         lastTime = Time.time;
@@ -413,6 +413,13 @@ public class Player : MonoBehaviour {
             }
 
         }
+
+        //Makes sure currentlygrappling is set to false if there is no grappling hook
+        if (GameObject.Find("Grappling Hook(Clone)") == null)
+        {
+            currentlyGrappling = false;
+        }
+
     }
 
     //Grappling hook ability
@@ -423,7 +430,6 @@ public class Player : MonoBehaviour {
         if (GameObject.Find("Grappling Hook(Clone)") != null)
         {
             Destroy(GameObject.Find("Grappling Hook(Clone)"));
-            currentlyGrappling = false;
             return;
         }
 
