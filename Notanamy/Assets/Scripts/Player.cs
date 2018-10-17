@@ -288,71 +288,71 @@ public class Player : MonoBehaviour {
     void FixedUpdate()
     {
 
-        //Throw a grappling hook using the R button
-        if (GrHAbl)
+        //physics
         {
-
-            //physics
+            //Simulate gravity for player only 
+            //Gravity on a wall is lower while moving down
+            if ((OnLeftWall() || OnRightWall()) && (rb.velocity.y < 0))
             {
-                //Simulate gravity for player only 
-                //Gravity on a wall is lower while moving down
-                if ((OnLeftWall() || OnRightWall()) && (rb.velocity.y < 0))
+                rb.AddForce(0, -wallGravity, 0);
+            }
+            else
+            {
+
+                //Change gravity strength to make jumps less floaty
+                if (rb.velocity.y < 0)
                 {
-                    rb.AddForce(0, -wallGravity, 0);
+                    rb.AddForce(0, -gravity * fallingMultiplier, 0);
                 }
+                //Holding up makes you jump higher
+                else if (Input.GetKey(KeyCode.W))
+                {
+                    rb.AddForce(0, -gravity, 0);
+                }
+                //Higher gravity when not holding up
                 else
                 {
+                    rb.AddForce(0, -gravity * lowJumpMultiplier, 0);
+                }
+            }
 
-                    //Change gravity strength to make jumps less floaty
-                    if (rb.velocity.y < 0)
-                    {
-                        rb.AddForce(0, -gravity * fallingMultiplier, 0);
-                    }
-                    //Holding up makes you jump higher
-                    else if (Input.GetKey(KeyCode.W))
-                    {
-                        rb.AddForce(0, -gravity, 0);
-                    }
-                    //Higher gravity when not holding up
-                    else
-                    {
-                        rb.AddForce(0, -gravity * lowJumpMultiplier, 0);
-                    }
+            //Limmit the speed a player can move at
+            if (rb.velocity.x > maxSpeed)
+            {
+                rb.velocity = new Vector3(maxSpeed, rb.velocity.y, 0);
+            }
+            if (rb.velocity.x < -maxSpeed)
+            {
+                rb.velocity = new Vector3(-maxSpeed, rb.velocity.y, 0);
+            }
+
+            //If no or both directions are pressed slow down using drag
+            if (!((Input.GetKey(KeyCode.D)) || (Input.GetKey(KeyCode.A))) || ((Input.GetKey(KeyCode.D)) && (Input.GetKey(KeyCode.A))) || allowMovement == false)
+            {
+                //Minimal speed to avoid micromovements instead of stopping
+                if (rb.velocity.x < minSpeed && rb.velocity.x > -minSpeed)
+                {
+                    rb.velocity = new Vector3(0, rb.velocity.y, 0);
                 }
 
-                //Limmit the speed a player can move at
-                if (rb.velocity.x > maxSpeed)
+                //Apply drag when on ground or when airDrag is turned on
+                if ((IsGrounded() || airDragTest) && !(currentlyGrappling))
                 {
-                    rb.velocity = new Vector3(maxSpeed, rb.velocity.y, 0);
-                }
-                if (rb.velocity.x < -maxSpeed)
-                {
-                    rb.velocity = new Vector3(-maxSpeed, rb.velocity.y, 0);
-                }
-
-                //If no or both directions are pressed slow down using drag
-                if (!((Input.GetKey(KeyCode.D)) || (Input.GetKey(KeyCode.A))) || ((Input.GetKey(KeyCode.D)) && (Input.GetKey(KeyCode.A))) || allowMovement == false)
-                {
-                    //Minimal speed to avoid micromovements instead of stopping
-                    if (rb.velocity.x < minSpeed && rb.velocity.x > -minSpeed)
+                    if (rb.velocity.x >= minSpeed)
                     {
-                        rb.velocity = new Vector3(0, rb.velocity.y, 0);
+                        rb.AddForce(-drag, 0, 0);
                     }
-
-                    //Apply drag when on ground or when airDrag is turned on
-                    if ((IsGrounded() || airDragTest) && !(currentlyGrappling))
+                    if (rb.velocity.x <= -minSpeed)
                     {
-                        if (rb.velocity.x >= minSpeed)
-                        {
-                            rb.AddForce(-drag, 0, 0);
-                        }
-                        if (rb.velocity.x <= -minSpeed)
-                        {
-                            rb.AddForce(drag, 0, 0);
-                        }
+                        rb.AddForce(drag, 0, 0);
                     }
                 }
             }
+        }
+
+        //Throw a grappling hook using the R button
+        if (GrHAbl)
+        {
 
             if (Input.GetKeyDown(KeyCode.R))
             {
