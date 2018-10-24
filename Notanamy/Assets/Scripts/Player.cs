@@ -65,6 +65,7 @@ public class Player : MonoBehaviour {
     public bool TimeAbl;
     public float timeSlowStrength;
     public float timeSlowDur;
+    public Transform zaWaruMaru;
 
     //collision ditection
     private Collider col;
@@ -300,17 +301,12 @@ public class Player : MonoBehaviour {
                 {
                     if (Input.GetKeyDown(KeyCode.LeftShift))
                     {
-                        Time.timeScale = timeSlowStrength;
-
-                        // Adjust fixed delta time according to timescale
-                        // The fixed delta time will now be 0.02 frames per real-time second
-                        Time.fixedDeltaTime = 0.02f * Time.timeScale;
+                        zaWarudoSpawn();
                     }
 
                     if (Input.GetKeyUp(KeyCode.LeftShift))
                     {
-                        Time.timeScale = 1.0f;
-                        Time.fixedDeltaTime = 0.02f * Time.timeScale;
+                        zaWarudoSpawn();
                     }
                 }
 
@@ -463,9 +459,17 @@ public class Player : MonoBehaviour {
             lowJumpMultiplier = lowJumpMultInit;
         }
 
+        if (TimeAbl)
+        {
+            if (GameObject.Find("ZaWaruMaru(Clone)") != null)
+            {
+                Debug.Log("test");
+            }
+        }
+
     }
 
-    //Grappling hook ability
+    //Grappling hook ability spawn grappling hook
     void grapplingHookSpawn()
     {
 
@@ -490,6 +494,25 @@ public class Player : MonoBehaviour {
 
         rigidGrHook.AddForce(grThrowSpeed * Mathf.Cos(grapAngle), grThrowSpeed * Mathf.Sin(grapAngle), 0);
 
+    }
+
+    //Time Slow ability spawn sphere
+    void zaWarudoSpawn()
+    {
+
+        if (GameObject.Find("ZaWaruMaru(Clone)") == null)
+        {
+            Instantiate(zaWaruMaru, rb.position, rb.rotation);
+            gravity = gravity * timeSlowStrength;
+        }
+
+        else
+        {
+            Destroy(GameObject.Find("ZaWaruMaru(Clone)"));
+            gravity = gravity / timeSlowStrength;
+            return;
+        }
+        
     }
 
 }
