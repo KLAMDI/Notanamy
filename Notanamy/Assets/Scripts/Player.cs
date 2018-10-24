@@ -61,6 +61,11 @@ public class Player : MonoBehaviour {
     float deltaGrapTime;
     float lastGrapTime;
 
+    //Slow Time
+    public bool TimeAbl;
+    public float timeSlowStrength;
+    public float timeSlowDur;
+
     //collision ditection
     private Collider col;
     private float distToGround;
@@ -287,6 +292,25 @@ public class Player : MonoBehaviour {
                     if (Input.GetKeyDown(KeyCode.R))
                     {
                         grapplingHookSpawn();
+                    }
+                }
+
+                //Time Slow Ability
+                if (TimeAbl)
+                {
+                    if (Input.GetKeyDown(KeyCode.LeftShift))
+                    {
+                        Time.timeScale = timeSlowStrength;
+
+                        // Adjust fixed delta time according to timescale
+                        // The fixed delta time will now be 0.02 frames per real-time second
+                        Time.fixedDeltaTime = 0.02f * Time.timeScale;
+                    }
+
+                    if (Input.GetKeyUp(KeyCode.LeftShift))
+                    {
+                        Time.timeScale = 1.0f;
+                        Time.fixedDeltaTime = 0.02f * Time.timeScale;
                     }
                 }
 
