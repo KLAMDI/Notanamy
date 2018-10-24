@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ZaWarudo : MonoBehaviour {
 
+    public float timeSlowStrength;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -13,4 +15,23 @@ public class ZaWarudo : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.transform.tag != "Player")
+        {
+            other.gameObject.GetComponent<Rigidbody>().velocity = other.gameObject.GetComponent<Rigidbody>().velocity*timeSlowStrength;
+            other.gameObject.GetComponent<Rigidbody>().mass = other.gameObject.GetComponent<Rigidbody>().mass * timeSlowStrength;
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.transform.tag != "Player")
+        {
+            other.gameObject.GetComponent<Rigidbody>().velocity = other.gameObject.GetComponent<Rigidbody>().velocity / timeSlowStrength;
+            other.gameObject.GetComponent<Rigidbody>().mass = other.gameObject.GetComponent<Rigidbody>().mass / timeSlowStrength;
+        }
+    }
 }
+
