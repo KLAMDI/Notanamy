@@ -66,6 +66,8 @@ public class Player : MonoBehaviour {
     public float timeSlowStrength;
     public float timeSlowDur;
     public Transform zaWaruMaru;
+    Transform colTimeSlow;
+    public float timeSlowRadius;
 
     //collision ditection
     private Collider col;
@@ -463,7 +465,7 @@ public class Player : MonoBehaviour {
         {
             if (GameObject.Find("ZaWaruMaru(Clone)") != null)
             {
-                Debug.Log("test");
+                
             }
         }
 
@@ -502,7 +504,13 @@ public class Player : MonoBehaviour {
 
         if (GameObject.Find("ZaWaruMaru(Clone)") == null)
         {
-            Instantiate(zaWaruMaru, rb.position, rb.rotation);
+            colTimeSlow = Instantiate(zaWaruMaru, rb.position, rb.rotation);
+            colTimeSlow.GetComponent<ZaWarudo>().timeSlowStrength = timeSlowStrength;
+
+            //Change radius of time slow
+            colTimeSlow.localScale += new Vector3(timeSlowRadius, timeSlowRadius, timeSlowRadius);
+
+            //Change player gravity to feel like time is moving slower
             gravity = gravity * timeSlowStrength;
         }
 
@@ -516,3 +524,4 @@ public class Player : MonoBehaviour {
     }
 
 }
+
