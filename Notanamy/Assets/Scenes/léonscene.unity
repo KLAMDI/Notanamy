@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -918,6 +918,31 @@ Prefab:
         type: 2}
       propertyPath: grThrowSpeed
       value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
+        type: 2}
+      propertyPath: TimeAbl
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
+        type: 2}
+      propertyPath: timeSlowStrength
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
+        type: 2}
+      propertyPath: zaWaruMaru
+      value: 
+      objectReference: {fileID: 4800700413958152, guid: ac33ed794765f5845967ab65f08a8408,
+        type: 2}
+    - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
+        type: 2}
+      propertyPath: timeSlowRadius
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1098213216113808, guid: c7e5cbded2365814ab2da1c5fb8ae160, type: 2}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c7e5cbded2365814ab2da1c5fb8ae160, type: 2}

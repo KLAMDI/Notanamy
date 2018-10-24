@@ -27,7 +27,7 @@ GameObject:
   - component: {fileID: 65316971300121726}
   m_Layer: 10
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -137,6 +137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca35600101a12a84d8c6d16fabf997ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allowMovement: 1
   speed: 20
   minSpeed: 0.2
   maxSpeed: 15
@@ -155,11 +156,13 @@ MonoBehaviour:
   dashTimer: 0
   dashSpeed: 0
   GrHAbl: 1
-  grThrowSpeed: 100
+  grThrowSpeed: 150
+  grappleLength: 5
+  grapplePullStrength: 1
   grapplingHook: {fileID: 54405227180230348, guid: 04872c2503d4712429959092ab32848e,
     type: 2}
-  attackOn: 0
-  attack: {fileID: 1017879631816838, guid: d88debb4ac30ae749b88e2d69526491a, type: 2}
-  attackRange: 3
-  attackV2On: 1
-  detectionAngle: 25
+  TimeAbl: 1
+  timeSlowStrength: 0.5
+  timeSlowDur: 0
+  zaWaruMaru: {fileID: 4800700413958152, guid: ac33ed794765f5845967ab65f08a8408, type: 2}
+  timeSlowRadius: 6
