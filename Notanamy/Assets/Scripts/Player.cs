@@ -433,12 +433,6 @@ public class Player : MonoBehaviour {
                         float currentVelGrap = Vector3.Dot(rb.velocity, grapDir);
                         rb.AddForce(-(currentVelGrap * grapDir) / deltaGrapTime);
 
-                        //Debug.Log(gravity * Mathf.Cos(grapAngle) * grapAngleDir);
-                        //Debug.Log((rb.velocity.sqrMagnitude / grappleplayerDistance) * grapDir);
-                        //Debug.Log((gravity * Mathf.Cos(grapAngle)) * grapDir);
-                        Debug.Log(grapAngleDir);
-                        Debug.Log(deltaGrapTime);
-
                         lastGrapTime = Time.time;
                     }
                 }
