@@ -510,6 +510,7 @@ public class Player : MonoBehaviour {
 
         else
         {
+            colTimeSlow.GetComponent<ZaWarudo>().removeSlow();
             Destroy(GameObject.Find("ZaWaruMaru(Clone)"));
             gravity = gravity / timeSlowStrength;
             return;

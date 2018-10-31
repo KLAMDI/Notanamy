@@ -17,7 +17,10 @@ public class ZaWarudo : MonoBehaviour {
 
         foreach (var item in slowedObjects)
         {
-            item.GetComponent<Rigidbody>().AddForce(-Physics.gravity*(1 - timeSlowStrength) * item.GetComponent<Rigidbody>().mass);
+            if (item != null)
+            {
+                item.GetComponent<Rigidbody>().AddForce(-Physics.gravity * (1 - timeSlowStrength) * item.GetComponent<Rigidbody>().mass);
+            }
         }
     }
 
@@ -40,6 +43,18 @@ public class ZaWarudo : MonoBehaviour {
             other.gameObject.GetComponent<Rigidbody>().mass = other.gameObject.GetComponent<Rigidbody>().mass * timeSlowStrength;
 
             slowedObjects.Remove(other.gameObject);
+        }
+    }
+
+    public void removeSlow()
+    {
+        foreach (var item in slowedObjects)
+        {
+            if (item != null)
+            {
+                item.GetComponent<Rigidbody>().velocity = item.GetComponent<Rigidbody>().velocity / timeSlowStrength;
+                item.GetComponent<Rigidbody>().mass = item.GetComponent<Rigidbody>().mass * timeSlowStrength;
+            }
         }
     }
 }
