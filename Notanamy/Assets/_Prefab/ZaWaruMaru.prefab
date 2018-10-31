@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 33411083438131172}
   - component: {fileID: 23046817504876428}
   - component: {fileID: 135530212854277842}
+  - component: {fileID: 114743592729710976}
   m_Layer: 0
   m_Name: ZaWaruMaru
   m_TagString: Untagged
@@ -84,6 +85,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1982266046848860}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &114743592729710976
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1982266046848860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea1720a054ef94e428787dd1dd16085d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeSlowStrength: 0
 --- !u!135 &135530212854277842
 SphereCollider:
   m_ObjectHideFlags: 1
