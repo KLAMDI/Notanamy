@@ -1140,7 +1140,7 @@ Prefab:
     - target: {fileID: 114000810076891368, guid: c7e5cbded2365814ab2da1c5fb8ae160,
         type: 2}
       propertyPath: timeSlowRadius
-      value: 4
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1098213216113808, guid: c7e5cbded2365814ab2da1c5fb8ae160, type: 2}
       propertyPath: m_TagString
