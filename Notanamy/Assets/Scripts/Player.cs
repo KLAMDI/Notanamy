@@ -459,7 +459,7 @@ public class Player : MonoBehaviour {
         {
             if (GameObject.Find("ZaWaruMaru(Clone)") != null)
             {
-                
+                colTimeSlow.transform.position = rb.transform.position;
             }
         }
 
