@@ -357,7 +357,7 @@ public class Player : MonoBehaviour {
                 rb.velocity = new Vector3(-maxSpeed, rb.velocity.y, 0);
             }
 
-            //If no or both directions are pressed slow down using drag
+            //Without input stop micromovements
             if (!((Input.GetKey(KeyCode.D)) || (Input.GetKey(KeyCode.A))) || ((Input.GetKey(KeyCode.D)) && (Input.GetKey(KeyCode.A))) || allowMovement == false)
             {
                 //Minimal speed to avoid micromovements instead of stopping
@@ -365,18 +365,18 @@ public class Player : MonoBehaviour {
                 {
                     rb.velocity = new Vector3(0, rb.velocity.y, 0);
                 }
+            }
 
-                //Apply drag when on ground or when airDrag is turned on
-                if ((IsGrounded() || airDragTest) && !(currentlyGrappling))
+            //Apply drag when on ground or when airDrag is turned on
+            if ((IsGrounded() || airDragTest) && !(currentlyGrappling))
+            {
+                if (rb.velocity.x >= minSpeed && !Input.GetKey(KeyCode.D))
                 {
-                    if (rb.velocity.x >= minSpeed)
-                    {
-                        rb.AddForce(-drag, 0, 0);
-                    }
-                    if (rb.velocity.x <= -minSpeed)
-                    {
-                        rb.AddForce(drag, 0, 0);
-                    }
+                    rb.AddForce(-drag, 0, 0);
+                }
+                if (rb.velocity.x <= -minSpeed && !Input.GetKey(KeyCode.A))
+                {
+                    rb.AddForce(drag, 0, 0);
                 }
             }
         }
