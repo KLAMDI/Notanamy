@@ -49,6 +49,12 @@ public class Player : MonoBehaviour {
     public float dashSpeed;
     int dashTapCount = 0;
 
+    //WallJump
+    public bool wallJumpAbility;
+    public float wallJumpX;
+    public float wallJumpY;
+
+
     //Grappling Hook
     public bool GrHAbl;
     public float grThrowSpeed;
@@ -195,17 +201,17 @@ public class Player : MonoBehaviour {
                         }
                     }
                     //If on a wall in the air do a walljump
-                    else
+                    else if (wallJumpAbility)
                     {
                         //On Left wall jump right
                         if (OnLeftWall())
                         {
-                            rb.AddForce(new Vector3(jumpSpeed, jumpSpeed, 0) - new Vector3(0, rb.velocity.y, 0), ForceMode.VelocityChange);
+                            rb.AddForce(new Vector3(wallJumpX, wallJumpY, 0) - new Vector3(0, rb.velocity.y, 0), ForceMode.VelocityChange);
                         }
                         //On right wall jumo left
                         if (OnRightWall())
                         {
-                            rb.AddForce(new Vector3(-jumpSpeed, jumpSpeed, 0) - new Vector3(0, rb.velocity.y, 0), ForceMode.VelocityChange);
+                            rb.AddForce(new Vector3(-wallJumpX, wallJumpY, 0) - new Vector3(0, rb.velocity.y, 0), ForceMode.VelocityChange);
                         }
                     }
                 }
