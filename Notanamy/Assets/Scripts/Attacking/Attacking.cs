@@ -219,8 +219,7 @@ public class Attacking : MonoBehaviour {
                                                 attackTimer = 10;
                                                 hitboxClone = spawnAttack(new Vector3(1, 0, 0), attackTimer);
                                                 hb = hitboxClone.GetComponent<Hitbox>();
-                                                hb.knockback = new Vector3(50, 0, 0);
-
+                                                hb.knockback = new Vector3(120, 0, 0);
                                                 rb.AddForce(new Vector3(200, 0, 0));
                                                 usingAttack = true;
                                                 comboCounter += 1;
@@ -228,7 +227,9 @@ public class Attacking : MonoBehaviour {
                                                 break;
                                             case 1:
                                                 attackTimer = 10;
-                                                spawnAttack(new Vector3(1, 0, 0), attackTimer);
+                                                hitboxClone = spawnAttack(new Vector3(1, 0, 0), attackTimer);
+                                                hb = hitboxClone.GetComponent<Hitbox>();
+                                                hb.knockback = new Vector3(50, 10, 0);
                                                 rb.AddForce(new Vector3(200, 0, 0));
                                                 usingAttack = true;
                                                 comboCounter = 2;
@@ -236,15 +237,19 @@ public class Attacking : MonoBehaviour {
                                                 break;
                                             case 2:
                                                 attackTimer = 40;
-                                                spawnAttack(new Vector3(1, 0, 0), attackTimer, true);
+                                                hitboxClone = spawnAttack(new Vector3(1, 0, 0), attackTimer, true);
+                                                hb = hitboxClone.GetComponent<Hitbox>();
+                                                hb.knockback = new Vector3(100, 0, 0);
                                                 usingAttack = true;
                                                 comboCounter = 3;
                                                 comboTimer = 15;
                                                 break;
                                             case 3:
                                                 attackTimer = 20;
-                                                spawnAttack(new Vector3(1, 0, 0), attackTimer);
+                                                hitboxClone = spawnAttack(new Vector3(1, 0, 0), attackTimer);
                                                 rb.AddForce(new Vector3(400, 0, 0));
+                                                hb = hitboxClone.GetComponent<Hitbox>();
+                                                hb.knockback = new Vector3(300, 50, 0);
                                                 usingAttack = true;
                                                 comboCounter = 0;
                                                 comboTimer = 0;
@@ -287,7 +292,9 @@ public class Attacking : MonoBehaviour {
                                         {
                                             case 0:
                                                 attackTimer = 10;
-                                                spawnAttack(new Vector3(-1, 0, 0), attackTimer);
+                                                hitboxClone = spawnAttack(new Vector3(-1, 0, 0), attackTimer);
+                                                hb = hitboxClone.GetComponent<Hitbox>();
+                                                hb.knockback = new Vector3(-120, 0, 0);
                                                 rb.AddForce(new Vector3(-200, 0, 0));
                                                 usingAttack = true;
                                                 comboCounter += 1;
@@ -295,7 +302,9 @@ public class Attacking : MonoBehaviour {
                                                 break;
                                             case 1:
                                                 attackTimer = 10;
-                                                spawnAttack(new Vector3(-1, 0, 0), attackTimer);
+                                                hitboxClone = spawnAttack(new Vector3(-1, 0, 0), attackTimer);
+                                                hb = hitboxClone.GetComponent<Hitbox>();
+                                                hb.knockback = new Vector3(-50, 0, 0);
                                                 rb.AddForce(new Vector3(-200, 0, 0));
                                                 usingAttack = true;
                                                 comboCounter = 2;
@@ -303,14 +312,18 @@ public class Attacking : MonoBehaviour {
                                                 break;
                                             case 2:
                                                 attackTimer = 40;
-                                                spawnAttack(new Vector3(-1, 0, 0), attackTimer, true);
+                                                hitboxClone = spawnAttack(new Vector3(-1, 0, 0), attackTimer, true);
+                                                hb = hitboxClone.GetComponent<Hitbox>();
+                                                hb.knockback = new Vector3(-100, 0, 0);
                                                 usingAttack = true;
                                                 comboCounter = 3;
                                                 comboTimer = 25;
                                                 break;
                                             case 3:
                                                 attackTimer = 20;
-                                                spawnAttack(new Vector3(-1, 0, 0), attackTimer);
+                                                hitboxClone = spawnAttack(new Vector3(-1, 0, 0), attackTimer);
+                                                hb = hitboxClone.GetComponent<Hitbox>();
+                                                hb.knockback = new Vector3(-300, 50, 0);
                                                 rb.AddForce(new Vector3(-400, 0, 0));
                                                 usingAttack = true;
                                                 comboCounter = 0;
