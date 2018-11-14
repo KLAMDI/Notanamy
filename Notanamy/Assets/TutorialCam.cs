@@ -23,11 +23,6 @@ public class TutorialCam : MonoBehaviour {
 
         if (pl.transform.position.x > transform.position.x + maxOfsetX)
         {
-            Debug.Log(pl.transform.position.x);
-            Debug.Log(transform.position.x + maxOfsetX);
-            Debug.Log(pl.transform.position.x - maxOfsetX);
-
-
             nextX = pl.transform.position.x - maxOfsetX;
         }
         if (pl.transform.position.x < transform.position.x - maxOfsetX)

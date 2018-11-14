@@ -114,7 +114,9 @@ public class Player : MonoBehaviour {
     public bool OnLeftWall()
     {
         bool OnWall1 = (Physics.Raycast(transform.position, Vector3.left, out ray,  distToWall + 0.1f) && ray.transform.tag == "Terrain");
-        bool OnWall = OnWall1;
+        bool OnWall2 = (Physics.Raycast(new Vector3(transform.position.x, transform.position.y - transform.localScale.y / 2 + 0.01f, transform.position.z), Vector3.left, out ray, distToWall + 0.1f) && ray.transform.tag == "Terrain");
+        bool OnWall3 = (Physics.Raycast(new Vector3(transform.position.x, transform.position.y - transform.localScale.y / 2 + 0.01f, transform.position.z), Vector3.left, out ray, distToWall + 0.1f) && ray.transform.tag == "Terrain");
+        bool OnWall = (OnWall1 || OnWall2 || OnWall3);
         return OnWall;
     }
 
@@ -122,7 +124,9 @@ public class Player : MonoBehaviour {
     public bool OnRightWall()
     {
         bool OnWall1 = (Physics.Raycast(transform.position, Vector3.right, out ray, distToWall + 0.1f) && ray.transform.tag == "Terrain");
-        bool OnWall = OnWall1;
+        bool OnWall2 = (Physics.Raycast(new Vector3(transform.position.x, transform.position.y - transform.localScale.y / 2 + 0.01f, transform.position.z), Vector3.right, out ray, distToWall + 0.1f) && ray.transform.tag == "Terrain");
+        bool OnWall3 = (Physics.Raycast(new Vector3(transform.position.x, transform.position.y - transform.localScale.y / 2 + 0.01f, transform.position.z), Vector3.right, out ray, distToWall + 0.1f) && ray.transform.tag == "Terrain");
+        bool OnWall = (OnWall1 || OnWall2 || OnWall3);
         return OnWall;
     }
 
