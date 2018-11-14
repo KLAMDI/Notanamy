@@ -505,6 +505,7 @@ public class Player : MonoBehaviour {
     //Time Slow ability spawn sphere
     void zaWarudoSpawn()
     {
+        StartCoroutine(WaitTimeSlow());
 
         if (GameObject.Find("ZaWaruMaru(Clone)") == null)
         {
@@ -526,6 +527,13 @@ public class Player : MonoBehaviour {
             return;
         }
         
+    }
+
+    IEnumerator WaitTimeSlow()
+    {
+        Time.timeScale = 0.0f;
+        yield return new WaitForSecondsRealtime(0.1f);
+        Time.timeScale = 1.0f;
     }
 
 }
