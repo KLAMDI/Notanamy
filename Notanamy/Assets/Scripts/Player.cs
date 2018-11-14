@@ -505,15 +505,14 @@ public class Player : MonoBehaviour {
     //Time Slow ability spawn sphere
     void zaWarudoSpawn()
     {
-        StartCoroutine(WaitTimeSlow());
 
         if (GameObject.Find("ZaWaruMaru(Clone)") == null)
         {
+
             colTimeSlow = Instantiate(zaWaruMaru, rb.position, rb.rotation);
             colTimeSlow.GetComponent<ZaWarudo>().timeSlowStrength = timeSlowStrength;
 
-            //Change radius of time slow
-            colTimeSlow.localScale += new Vector3(timeSlowRadius, timeSlowRadius, timeSlowRadius);
+            StartCoroutine(WaitTimeSlow());
 
             //Change player gravity to feel like time is moving slower
             gravity = gravity * timeSlowStrength;
@@ -532,7 +531,23 @@ public class Player : MonoBehaviour {
     IEnumerator WaitTimeSlow()
     {
         Time.timeScale = 0.0f;
-        yield return new WaitForSecondsRealtime(0.1f);
+
+        float slowRadius = 0.0f;
+
+        while (slowRadius < timeSlowRadius)
+        {
+            yield return new WaitForSecondsRealtime(0.1f / 20.0f);
+
+            if (GameObject.Find("ZaWaruMaru(Clone)") != null)
+            {
+
+                slowRadius += 0.05f * timeSlowRadius;
+
+                //Change radius of time slow
+                colTimeSlow.localScale = new Vector3(slowRadius, slowRadius, slowRadius);
+            }
+        }
+
         Time.timeScale = 1.0f;
     }
 
