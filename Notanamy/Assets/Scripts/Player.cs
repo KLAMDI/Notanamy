@@ -534,10 +534,10 @@ public class Player : MonoBehaviour {
 
         float slowRadius = 0.0f;
 
-        while (slowRadius < timeSlowRadius)
+        while (slowRadius < timeSlowRadius && GameObject.Find("ZaWaruMaru(Clone)") != null)
         {
             yield return new WaitForSecondsRealtime(0.1f / 20.0f);
-
+            
             if (GameObject.Find("ZaWaruMaru(Clone)") != null)
             {
 
@@ -545,6 +545,7 @@ public class Player : MonoBehaviour {
 
                 //Change radius of time slow
                 colTimeSlow.localScale = new Vector3(slowRadius, slowRadius, slowRadius);
+
             }
         }
 
