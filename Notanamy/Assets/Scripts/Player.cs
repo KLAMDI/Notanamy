@@ -35,6 +35,7 @@ public class Player : MonoBehaviour {
     public float lowJumpMultiplier;
     float fallingMultInit;
     float lowJumpMultInit;
+    float normalGravity;
 
     //Dash
     public bool dashAbl1;
@@ -74,6 +75,8 @@ public class Player : MonoBehaviour {
     public Transform zaWaruMaru;
     Transform colTimeSlow;
     public float timeSlowRadius;
+    bool timeSlowStart;
+    float currentRadius;
 
     //collision ditection
     private Collider col;
@@ -95,6 +98,9 @@ public class Player : MonoBehaviour {
 
         distToGround = col.bounds.extents.y;
         distToWall = col.bounds.extents.x;
+
+        //For effects that alter gravity
+        normalGravity = gravity;
       
         //Dashing initial values
         dashTimerInit = dashTimer;
@@ -389,6 +395,17 @@ public class Player : MonoBehaviour {
                     rb.AddForce(drag, 0, 0);
                 }
             }
+
+            //Alter gravity if timeslow is active
+            if (GameObject.Find("ZaWaruMaru(Clone)") != null)
+            {
+                gravity = normalGravity * timeSlowStrength;
+            }
+            else
+            {
+                gravity = normalGravity;
+            }
+
         }
 
         //Throw a grappling hook using the R button
@@ -512,18 +529,16 @@ public class Player : MonoBehaviour {
             colTimeSlow = Instantiate(zaWaruMaru, rb.position, rb.rotation);
             colTimeSlow.GetComponent<ZaWarudo>().timeSlowStrength = timeSlowStrength;
 
+            timeSlowStart = true;
+            currentRadius = 0.0f;
             StartCoroutine(WaitTimeSlow());
 
-            //Change player gravity to feel like time is moving slower
-            gravity = gravity * timeSlowStrength;
         }
 
         else
         {
-            colTimeSlow.GetComponent<ZaWarudo>().removeSlow();
-            Destroy(GameObject.Find("ZaWaruMaru(Clone)"));
-            gravity = gravity / timeSlowStrength;
-            return;
+            timeSlowStart = false;
+            StartCoroutine(WaitTimeSlow());
         }
         
     }
@@ -532,21 +547,47 @@ public class Player : MonoBehaviour {
     {
         Time.timeScale = 0.0f;
 
-        float slowRadius = 0.0f;
-
-        while (slowRadius < timeSlowRadius && GameObject.Find("ZaWaruMaru(Clone)") != null)
+        if (timeSlowStart)
         {
-            yield return new WaitForSecondsRealtime(0.1f / 20.0f);
-            
+            while (currentRadius < timeSlowRadius && GameObject.Find("ZaWaruMaru(Clone)") != null && timeSlowStart)
+            {
+                yield return new WaitForSecondsRealtime(0.1f / 20.0f);
+
+                if (GameObject.Find("ZaWaruMaru(Clone)") != null)
+                {
+
+                    currentRadius += 0.05f * timeSlowRadius;
+
+                    //Change radius of time slow
+                    colTimeSlow.localScale = new Vector3(currentRadius, currentRadius, currentRadius);
+
+                }
+            }
+        }
+        else
+        {
+            while (currentRadius > 0.0f && GameObject.Find("ZaWaruMaru(Clone)") != null)
+            {
+                yield return new WaitForSecondsRealtime(0.1f / 20.0f);
+
+                if (GameObject.Find("ZaWaruMaru(Clone)") != null)
+                {
+
+                    currentRadius -= 0.05f * timeSlowRadius;
+
+                    //Change radius of time slow
+                    colTimeSlow.localScale = new Vector3(currentRadius, currentRadius, currentRadius);
+
+                }
+            }
+
             if (GameObject.Find("ZaWaruMaru(Clone)") != null)
             {
-
-                slowRadius += 0.05f * timeSlowRadius;
-
-                //Change radius of time slow
-                colTimeSlow.localScale = new Vector3(slowRadius, slowRadius, slowRadius);
-
+                colTimeSlow.GetComponent<ZaWarudo>().removeSlow();
+                Destroy(GameObject.Find("ZaWaruMaru(Clone)"));
             }
+
+
         }
 
         Time.timeScale = 1.0f;
