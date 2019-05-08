@@ -13,10 +13,14 @@ public class Movement : MonoBehaviour {
     bool detectedSlopeUp;
     bool detectedSlopeDown;
 
+    bool slopeLeft;
+    bool slopeRight;
+
     bool steepSlope;
+    bool slopeFound;
 
     float slopeAngle;
-    float maxAngle;
+    public float maxAngle;
 
     //Test varaibles 
     float testAngle;
@@ -152,9 +156,7 @@ public class Movement : MonoBehaviour {
      */
     void CheckSlope2(int side)
     {
-        float neededX = 0;
-        float neededY = 0;
-        bool slopeFound = false;
+        slopeFound = false;
         steepSlope = false;
         switch (side)
         {
@@ -165,6 +167,7 @@ public class Movement : MonoBehaviour {
                     slopeAngle = Vector3.Angle(ray.normal, Vector3.up);
                     slopeFound = true;
                     detectedSlopeUp = true;
+                    slopeLeft = true;
                 }
                 break;
             case 1:
@@ -174,6 +177,7 @@ public class Movement : MonoBehaviour {
                     slopeAngle = Vector3.Angle(ray.normal, Vector3.up);
                     slopeFound = true;
                     detectedSlopeUp = true;
+                    slopeRight = true;
                 }
                 break;
                 //Check form the lower left corner downwards
@@ -186,7 +190,7 @@ public class Movement : MonoBehaviour {
                         slopeFound = true;
                         detectedSlopeDown = true;
                     }
-                    
+                    slopeLeft = true;
                 }
                 break;
                 //check from the lower right corner downwards
@@ -199,6 +203,7 @@ public class Movement : MonoBehaviour {
                         slopeFound = true;
                         detectedSlopeDown = true;
                     }
+                    slopeRight = true;
                 }
                 break;
         }
@@ -206,13 +211,29 @@ public class Movement : MonoBehaviour {
         {
             steepSlope = true;
         }
+    }
+
+    /* CheckSlope2(int side)
+    * This checks the right coner for a slope and applies the corerct forces based of the selected slope
+    * int side
+    * 0 = left
+    * 1 = right
+    * 2 = down left
+    * 3 = down right
+    * 
+    */
+    void ApplySlopes(int side)
+    {
+        float neededX = 0;
+        float neededY = 0;
+
         //Apply correct horizontal and vertical forces when on a slope
         if (slopeFound)
         {
             //Determine the nessesary forces
             neededX = Mathf.Abs(movementSpeed) * Mathf.Cos(Mathf.Deg2Rad * slopeAngle);
             neededY = Mathf.Abs(movementSpeed) * Mathf.Sin(Mathf.Deg2Rad * slopeAngle);
-            
+
             //Apply the forces
             if (movementSpeed < 0)
             {
@@ -231,10 +252,9 @@ public class Movement : MonoBehaviour {
             {
                 YSpeed = -neededY;
             }
-            Debug.Log(neededX);
-            Debug.Log(neededY);
         }
     }
+
 
     /* CheckWall2(int side)
      * This checks if the player hits a wall going or trying to go towards a certain direction
@@ -621,49 +641,13 @@ public class Movement : MonoBehaviour {
                 }
             }//Y movement calculations
 
-            if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
-            {
-                detectedWall = false;
-                detectedSlopeUp = false;
-                detectedSlopeDown = false;
-                //Check if the player is trying to moce into a wall to the left
-                CheckWall2(2);
-                
-                //Stop trying to move left if a wall is detected
-                if (!detectedWall)
-                {
-                    movementSpeed -= speed;
-                }
-            }
-            if (Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
-            {
-                detectedWall = false;
-                detectedSlopeUp = false;
-                detectedSlopeDown = false;
-                //Checks if the player is trying to move into a wall to the right
-                CheckWall2(3);
-                //Stop trying to move left if a wall is detected
-                if (!detectedWall)
-                {
-                    movementSpeed += speed;
-                }
-            }
-            //Apply movement when not trying to move in a particular direction
-            if ((Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D)) || (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D)))
-            {
-                detectedSlopeUp = false;
-                detectedSlopeDown = false;
-                //Add drag when not intending to move
-                if (movementSpeed < 0)
-                {
-                    movementSpeed += drag;
-                }
-                if (movementSpeed > 0)
-                {
-                    movementSpeed -= drag;
-                }
-            }
-            //Check the slope depending on movement direction
+            //Check for slopes depending on movement direction
+            detectedSlopeUp = false;
+            detectedSlopeDown = false;
+            steepSlope = false;
+            slopeLeft = false;
+            slopeRight = false;
+
             if (movementSpeed < 0)
             {
                 CheckSlope2(0);
@@ -682,9 +666,108 @@ public class Movement : MonoBehaviour {
                     CheckSlope2(2);
                 }
             }
+            //Check both sides if the player isn't moving
+            if (movementSpeed == 0)
+            {
+                CheckSlope2(2);
+                CheckSlope2(3);
+            }
+
+
+            //Change speeds
+            if (!steepSlope)
+            {
+                if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
+                {
+                    detectedWall = false;
+                    //Check if the player is trying to moce into a wall to the left
+                    CheckWall2(2);
+
+                    //Stop trying to move left if a wall is detected
+                    if (!detectedWall)
+                    {
+                        movementSpeed -= speed;
+                    }
+                }
+                if (Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
+                {
+                    detectedWall = false;
+                    //Checks if the player is trying to move into a wall to the right
+                    CheckWall2(3);
+                    //Stop trying to move left if a wall is detected
+                    if (!detectedWall)
+                    {
+                        movementSpeed += speed;
+                    }
+                }
+                //Apply movement when not trying to move in a particular direction
+                if ((Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D)) || (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D)))
+                {
+                    //Add drag when not intending to move
+                    if (movementSpeed < 0)
+                    {
+                        //If the drag is more then the current speed, set the speed to 0
+                        if (movementSpeed < -drag)
+                        {
+                            movementSpeed += drag;
+                        }
+                        else
+                        {
+                            movementSpeed = 0;
+                        }
+                    }
+                    if (movementSpeed > 0)
+                    {
+                        //If the drag is more then the current speed, set the speed to 0
+                        if (movementSpeed > drag)
+                        {
+                            movementSpeed -= drag;
+                        }
+                        else
+                        {
+                            movementSpeed = 0;
+                        }
+                        movementSpeed -= drag;
+                    }
+                }
+            }
+            if (steepSlope)
+            {
+                //Slide down the slopes
+                Debug.Log("SlopeLeft = " + slopeLeft + " & SlopeRight = " + slopeRight);
+                if (slopeLeft)
+                {
+                    movementSpeed += speed;
+                }
+                if (slopeRight)
+                {
+                    movementSpeed -= speed;
+                }
+            }
+
+
+            //Apply slope movements
+            if (movementSpeed < 0)
+            {
+                ApplySlopes(0);
+                if (!detectedSlopeUp)
+                {
+
+                    ApplySlopes(3);
+                }
+            }
+            if (movementSpeed > 0)
+            {
+                ApplySlopes(1);
+                if (!detectedSlopeUp)
+                {
+
+                    ApplySlopes(2);
+                }
+            }
 
             //Jump when on the ground and pressing w
-            if (Input.GetKeyDown(KeyCode.W) && isGrounded)
+            if (Input.GetKeyDown(KeyCode.W) && isGrounded && !steepSlope)
             {
                 YSpeed += jumpSpeed;
             }
