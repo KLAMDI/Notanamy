@@ -113,6 +113,7 @@ public class Player : MonoBehaviour {
 
     //Checks if the player in on the ground using 5 raycast to minimize the area not checked and returns a boolian
     public bool IsGrounded() {
+         
         bool OnGround1 = (Physics.Raycast(transform.position, -Vector3.up, out ray, distToWall + 0.1f) && ray.transform.tag == "Terrain");
         bool OnGround2 = (Physics.Raycast(new Vector3(transform.position.x - transform.localScale.x / 2 + 0.01f, transform.position.y, transform.position.z), -Vector3.up, out ray, distToWall + 0.1f) && ray.transform.tag == "Terrain");
         bool OnGround3 = (Physics.Raycast(new Vector3(transform.position.x + transform.localScale.x / 2 - 0.01f, transform.position.y, transform.position.z), -Vector3.up, out ray, distToWall + 0.1f) && ray.transform.tag == "Terrain");
@@ -161,9 +162,55 @@ public class Player : MonoBehaviour {
         return pos;
     }
 
+    public void CheckSlopes()
+    {
+        //Getting the rotation of the slope if there is any
+        float rightSlopeRotation = 0;
+        float leftSlopeRotation = 0;
+        float x = 0;
+        float y = 0;
+        //Check if there is a slope right and give its rotation if it detects one
+        Debug.DrawRay(new Vector3(transform.position.x + transform.localScale.x/2, transform.position.y - transform.localScale.y / 2 + 0.01f, transform.position.z), Vector3.right, Color.red);
+        if (Physics.Raycast(new Vector3(transform.position.x + transform.localScale.x/2, transform.position.y - transform.localScale.y / 2 + 0.01f, transform.position.z), Vector3.right, out ray, 0.1f) && ray.transform.tag == "Terrain")
+        {
+            rightSlopeRotation = ray.transform.rotation.eulerAngles.z;
+            Debug.Log((rightSlopeRotation));
+        }
+        //Check if there is a slope left and give its rotation if it detects one
+        else if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y - transform.localScale.y / 2 + 0.01f, transform.position.z), Vector3.left, out ray, distToWall + 0.01f) && ray.transform.tag == "Terrain")
+        {
+            leftSlopeRotation = ray.transform.gameObject.transform.rotation.z;
+        }
+
+        //Change velocoties and apply forces based on rotations
+        //When moving up a slope to the right
+        if (rb.velocity.x > 0 && rightSlopeRotation > 0)
+        {
+            
+        }
+        //When moving up a slope to the left
+        if (rb.velocity.x < 0 && leftSlopeRotation > 0)
+        {
+
+        }
+        /*
+        if (Input.GetKey(KeyCode.A) && !(Input.GetKey(KeyCode.D)))
+        {
+            rb.AddForce(-speed, 0, 0);
+        }
+        */
+        if (Input.GetKey(KeyCode.D) && !(Input.GetKey(KeyCode.A)))
+        {
+            rb.AddForce(speed * x, speed * y, 0);
+        }
+
+
+    }
+
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("test");
         //Mouse Position
         mouseP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseP = new Vector3(mouseP.x, mouseP.y, 0);
@@ -197,6 +244,7 @@ public class Player : MonoBehaviour {
                         //Jumping while on the ground is higher
                         if (IsGrounded())
                         {
+                            Debug.Log("test");
                             rb.AddForce(new Vector3(0, jumpSpeed, 0), ForceMode.VelocityChange);
                         }
                         //Check if any air jumps are remaining and airjumps are effected by airjump multiplier
@@ -328,6 +376,9 @@ public class Player : MonoBehaviour {
                     }
                 }
 
+                
+                //Slopes
+                CheckSlopes();
             }
         }
     }
