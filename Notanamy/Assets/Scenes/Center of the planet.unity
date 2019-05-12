@@ -568,12 +568,12 @@ MonoBehaviour:
   movemode2: 1
   maxAngle: 45
   test: 0
-  speed: 0.15
-  maxSpeed: 4
-  drag: 0.15
+  speed: 0.225
+  maxSpeed: 6
+  drag: 0.225
   isGrounded: 0
   gravity: 0.5
-  jumpSpeed: 9
+  jumpSpeed: 12
   movementSpeed: 0
   xSpeed: 0
   YSpeed: 0
