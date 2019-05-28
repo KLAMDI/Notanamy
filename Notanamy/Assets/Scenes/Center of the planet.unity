@@ -564,10 +564,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5b92c704d611e640af6e64e4806edba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movemode1: 0
-  movemode2: 1
   maxAngle: 45
-  test: 0
+  slopeDetectionRange: 0
   speed: 0.225
   maxSpeed: 6
   drag: 0.225
@@ -577,10 +575,6 @@ MonoBehaviour:
   movementSpeed: 0
   xSpeed: 0
   YSpeed: 0
-  slopeDetectionRange: 0
-  downSlopeDetectionRange: 0
-  lowSlopeDist: 0.005
-  midSlopeDist: 0.485
 --- !u!65 &955557631
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -642,7 +636,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 955557629}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.57, y: -2.18, z: 0}
+  m_LocalPosition: {x: 9.42, y: 3.02, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -755,7 +749,7 @@ BoxCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1504286673}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
