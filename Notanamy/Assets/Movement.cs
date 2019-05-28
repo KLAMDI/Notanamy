@@ -54,7 +54,17 @@ public class Movement : MonoBehaviour {
             //Raycast multiple places under the player
             grounded[0] = (Physics.Raycast(new Vector3(transform.position.x, transform.position.y, transform.position.z), -Vector3.up, out ray, transform.localScale.y / 2) && ray.transform.tag == "Terrain");
             grounded[1] = (Physics.Raycast(new Vector3(transform.position.x - transform.localScale.x / 2, transform.position.y, transform.position.z), -Vector3.up, out ray, transform.localScale.y / 2) && ray.transform.tag == "Terrain");
+            slopeAngle = Vector3.Angle(ray.normal, Vector3.up);
+            if ((slopeAngle != 0 || slopeAngle != 90) && slopeAngle > maxAngle)
+            {
+                grounded[1] = false;
+            }
             grounded[2] = (Physics.Raycast(new Vector3(transform.position.x + transform.localScale.x / 2, transform.position.y, transform.position.z), -Vector3.up, out ray, transform.localScale.y / 2) && ray.transform.tag == "Terrain");
+            slopeAngle = Vector3.Angle(ray.normal, Vector3.up);
+            if ((slopeAngle != 0 || slopeAngle != 90) && slopeAngle > maxAngle)
+            {
+                grounded[2] = false;
+            }
             grounded[3] = (Physics.Raycast(new Vector3(transform.position.x - transform.localScale.x / 4, transform.position.y, transform.position.z), -Vector3.up, out ray, transform.localScale.y / 2) && ray.transform.tag == "Terrain");
             grounded[4] = (Physics.Raycast(new Vector3(transform.position.x + transform.localScale.x / 4, transform.position.y, transform.position.z), -Vector3.up, out ray, transform.localScale.y / 2) && ray.transform.tag == "Terrain");
             grounded[5] = (Physics.Raycast(new Vector3(transform.position.x - transform.localScale.x / 2 + transform.localScale.x / 8, transform.position.y, transform.position.z), -Vector3.up, out ray, transform.localScale.y / 2) && ray.transform.tag == "Terrain");
@@ -296,6 +306,7 @@ public class Movement : MonoBehaviour {
         detectedSlopeUp = false;
         detectedSlopeDown = false;
         steepSlope = false;
+        slopeAngle = 0;
         slopeLeft = false;
         slopeRight = false;
 
@@ -386,13 +397,30 @@ public class Movement : MonoBehaviour {
             //Slide down the slopes
             if (slopeLeft)
             {
-                movementSpeed += speed;
+                if (YSpeed < 0)
+                {
+                    movementSpeed += speed - YSpeed/10;
+                }
+                else
+                {
+                    movementSpeed += speed;
+                }
             }
             if (slopeRight)
             {
-                movementSpeed -= speed;
+                if (YSpeed < 0)
+                {
+                    movementSpeed -= speed - YSpeed/10;
+                }
+                else
+                {
+                    movementSpeed -= speed;
+                }
             }
         }
+
+        Debug.Log("X = " + xSpeed);
+        Debug.Log("y = " + YSpeed);
 
         //Apply slope movements
         if (movementSpeed < 0)
