@@ -20,7 +20,7 @@ public class planetRotate : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        playerVelocity = movement.movementSpeed*rotateSpeed;
+        playerVelocity = movement.xSpeed*rotateSpeed;
         player.transform.position = new Vector3(0, player.transform.position.y, player.transform.position.z);
         planet.transform.Rotate(0, 0, playerVelocity);
 
